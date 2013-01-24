@@ -33,7 +33,7 @@ namespace SQ7MRU.Utils.eQSL
 
             if (string.IsNullOrEmpty(Path))
             {
-                path = AppDomain.CurrentDomain.BaseDirectory.ToString();
+                path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\";
             }
             else
             {
@@ -247,14 +247,21 @@ namespace SQ7MRU.Utils.eQSL
         //}
 
 
-        public void GetJPGfromURL(string URL, int SleepTime = 0)
+        public void GetJPGfromURL(string URL, int SleepTime = 0, string Subfolder = null)
         {
             string pathfile = path + FilenameFromURL(URL);
+
+            if (!string.IsNullOrEmpty(Subfolder))
+            {
+                CreateCallsingSubFolder(Subfolder.Replace("/", "_"));
+                pathfile = path + Subfolder.Replace("/", "_") + @"\" + FilenameFromURL(URL);
+            }
+           
 
             if (!File.Exists(pathfile) ||new FileInfo(pathfile).Length == 0)
             {
                 Thread.Sleep(SleepTime);
-
+                
                 using (WebClient wc = new WebClientEx(m_container))
                {
                    wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
@@ -274,9 +281,9 @@ namespace SQ7MRU.Utils.eQSL
            }
         }
 
-        public void NewThreadOfGetJPGfromURL(string Url, int SleepTime = 0)
+        public void NewThreadOfGetJPGfromURL(string Url, int SleepTime = 0, string Subfolder = null)
         {
-                var t = new Thread(() => GetJPGfromURL(Url,SleepTime));
+                var t = new Thread(() => GetJPGfromURL(Url,SleepTime,Subfolder));
                 t.Start();
                 t.Join();
         }
@@ -290,6 +297,12 @@ namespace SQ7MRU.Utils.eQSL
             return Filename;
         }
 
+        private void CreateCallsingSubFolder(string Callsing)
+        {
+            bool folderExists = Directory.Exists(path + Callsing);
+            if (!folderExists)
+                Directory.CreateDirectory(path + Callsing);
+        }
 
 
         // tips from http://stackoverflow.com/questions/1777221/using-cookiecontainer-with-webclient-class

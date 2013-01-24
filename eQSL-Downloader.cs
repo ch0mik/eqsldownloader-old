@@ -31,7 +31,7 @@ namespace eQSL_Downloader
             InitializeComponent();
             Literals();
             lblInfo.AutoSize = false;
-            SavingPath = AppDomain.CurrentDomain.BaseDirectory.ToString();
+            SavingPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\";
             sleepSliderValue = 0;
 
         }
@@ -78,9 +78,16 @@ namespace eQSL_Downloader
         {
             using (FolderBrowserDialog fbd = new FolderBrowserDialog())
             {
-                fbd.SelectedPath = AppDomain.CurrentDomain.BaseDirectory.ToString();
+                fbd.SelectedPath = SavingPath;
                 fbd.ShowDialog();
-                SavingPath = fbd.SelectedPath + @"\";
+                
+                SavingPath = fbd.SelectedPath;
+
+                if (SavingPath.Substring(SavingPath.Length - 1) != @"\")
+                {
+                    SavingPath += @"\";
+                }
+
                 AddInfo("Wybrano folder zapisu na : " + SavingPath);
             }
         }
@@ -190,7 +197,7 @@ namespace eQSL_Downloader
             Login = txtLogin.Text;
             Password = txtPassword.Text;
 
-            eqsl = new Downloader(Login, Password, SavingPath,true);
+            eqsl = new Downloader(Login, Password, SavingPath);
             eqsl.Logon();
             CallAndQTHList = eqsl.getCallAndQTH();
 
@@ -321,7 +328,7 @@ namespace eQSL_Downloader
                                 {
 
                                     //Download single eQSL as New Thread
-                                    eqsl.NewThreadOfGetJPGfromURL(Url, sleepSliderValue * 1000);
+                                    eqsl.NewThreadOfGetJPGfromURL(Url, sleepSliderValue * 1000, callqth.CallSign);
                                     Counter += 1;
                                     AddInfo(Counter + "/" + Urls.Count + " : " + eqsl.FilenameFromURL(Url));
                                 }
