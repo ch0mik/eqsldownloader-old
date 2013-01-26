@@ -5,17 +5,33 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Globalization;
+using System.Threading;
 
 namespace eQSL_Downloader
 {
     partial class About : Form
     {
-        public About()
+        ComponentResourceManager rm;
+
+        public About(string lang = null)
         {
+            if (!string.IsNullOrEmpty(lang))
+            {
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfoByIetfLanguageTag(lang);
+            }
+            else
+            {
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+            }
+
             InitializeComponent();
-            this.Text = String.Format("{0}", AssemblyTitle);
+            rm = new ComponentResourceManager(this.GetType());
+
+            this.Text = rm.GetString("$this.Text");
             this.labelProductName.Text = AssemblyProduct;
-            this.labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
+            this.labelVersion.Text = String.Format("{0} {1}", rm.GetString("labelVersion.Text"), AssemblyVersion);
+            this.label1.Text = rm.GetString("label1.Text");
 
         }
 

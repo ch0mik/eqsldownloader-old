@@ -139,7 +139,7 @@
     <value>0</value>
   </data>
   <data name="lblLogin.Text" xml:space="preserve">
-    <value>Użytkownik</value>
+    <value>Username</value>
   </data>
   <data name="&gt;&gt;lblLogin.Name" xml:space="preserve">
     <value>lblLogin</value>
@@ -172,7 +172,7 @@
     <value>1</value>
   </data>
   <data name="lblPassword.Text" xml:space="preserve">
-    <value>Hasło</value>
+    <value>Password</value>
   </data>
   <data name="&gt;&gt;lblPassword.Name" xml:space="preserve">
     <value>lblPassword</value>
@@ -202,7 +202,7 @@
     <value>2</value>
   </data>
   <data name="btnLogin.Text" xml:space="preserve">
-    <value>Zaloguj</value>
+    <value>Logon</value>
   </data>
   <data name="&gt;&gt;btnLogin.Name" xml:space="preserve">
     <value>btnLogin</value>
@@ -286,7 +286,7 @@
     <value>6</value>
   </data>
   <data name="btnNext.Text" xml:space="preserve">
-    <value>Dalej</value>
+    <value>Next</value>
   </data>
   <data name="&gt;&gt;btnNext.Name" xml:space="preserve">
     <value>btnNext</value>
@@ -334,13 +334,13 @@
     <value>155, 22</value>
   </data>
   <data name="zmieńFolderZapisuToolStripMenuItem1.Text" xml:space="preserve">
-    <value>Zmień folder</value>
+    <value>Change Folder</value>
   </data>
   <data name="konfiguracjaToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>155, 22</value>
   </data>
   <data name="konfiguracjaToolStripMenuItem.Text" xml:space="preserve">
-    <value>Konfiguracja</value>
+    <value>Configuration</value>
   </data>
   <data name="polskiToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>152, 22</value>
@@ -358,7 +358,7 @@
     <value>155, 22</value>
   </data>
   <data name="językToolStripMenuItem.Text" xml:space="preserve">
-    <value>Język</value>
+    <value>Language</value>
   </data>
   <data name="menuToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
     <value>45, 20</value>
@@ -370,13 +370,13 @@
     <value>78, 20</value>
   </data>
   <data name="oProgramieToolStripMenuItem.Text" xml:space="preserve">
-    <value>O programie</value>
+    <value>About</value>
   </data>
   <data name="importujADIFToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>97, 20</value>
   </data>
   <data name="importujADIFToolStripMenuItem.Text" xml:space="preserve">
-    <value>Zaimportuj plik ADIF</value>
+    <value>Import ADIF File</value>
   </data>
   <data name="importujADIFToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -409,7 +409,7 @@
     <value>177, 22</value>
   </data>
   <data name="zmieńFolderZapisuToolStripMenuItem.Text" xml:space="preserve">
-    <value>Zmień folder zapisu</value>
+    <value>Change folder</value>
   </data>
   <data name="menuToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>45, 20</value>
@@ -559,51 +559,54 @@
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="str_ErrorDuringLogon" xml:space="preserve">
-    <value>Błąd podczas logowania, nie udało się pobrać żadnego znaku przypisanego do tego konta eQSL.cc</value>
+    <value>Error during logon, failed to get any callsign assigned to this account eQSL.cc</value>
   </data>
   <data name="str_InfoCallSignList" xml:space="preserve">
-    <value>Pobieranie eQSLek będzie dla login(ów) : </value>
+    <value>Downloads eQSLs will be for callsign (s):</value>
   </data>
   <data name="str_BadLoginInADIF" xml:space="preserve">
-    <value>Login nie jest ten sam co w pliku ADIF</value>
+    <value>Login is not the same as in the ADIF file</value>
   </data>
   <data name="str_BeginConvert" xml:space="preserve">
-    <value>rozpoczęcie konwersji</value>
+    <value>begin convert</value>
   </data>
   <data name="str_beginDownloadADIFfor" xml:space="preserve">
-    <value>rozpoczęcie pobierania pliku ADIF dla </value>
+    <value>Begin download ADIF file for callsign </value>
   </data>
   <data name="str_BeginDownloadProcedure" xml:space="preserve">
-    <value>Rozpoczęcie procedury pobierania eQSLek ...</value>
+    <value>Begin download eQSLs procedure ...</value>
   </data>
   <data name="str_BeginDownload_eQSLs" xml:space="preserve">
+    <value>Begin download eQSLs </value>
+  </data>
+  <data name="str_BeginDownload_eQSLs1" xml:space="preserve">
     <value>Rozpoczęto pobieranie eQSLek</value>
   </data>
   <data name="str_ChooseDownloadDelay" xml:space="preserve">
-    <value>Wybrano opóźnienie w pobieraniu eQSLek na</value>
+    <value>Choosen download delay for </value>
   </data>
   <data name="str_ChooseFolder" xml:space="preserve">
-    <value>Wybrano folder zapisu na : </value>
+    <value>Choosen working folder : </value>
   </data>
   <data name="str_ConvertADIFtoURLs" xml:space="preserve">
-    <value>Przekształcam rekordy ADIF na URLe do pobrania ...</value>
+    <value>Convert  ADIF to URLs ...</value>
   </data>
   <data name="str_Done" xml:space="preserve">
-    <value>... zakończono.</value>
+    <value> ... done.</value>
   </data>
   <data name="str_Download_eQSLs_done" xml:space="preserve">
-    <value>Pobrano wszystkie eQSL dla wszystkich znaków.\nMożesz zakończyć działanie programu.</value>
+    <value>Download all eQSL for all callsigns.\nYou can exit the program.</value>
   </data>
   <data name="str_EndingMessage" xml:space="preserve">
-    <value>Zapraszam do ponownego skorzystania ;)</value>
+    <value>Feel free to re-use;)</value>
   </data>
   <data name="str_ErrorOccurred" xml:space="preserve">
-    <value>wystąpił błąd ...</value>
+    <value>An error has occurred ...</value>
   </data>
   <data name="str_for" xml:space="preserve">
-    <value>dla</value>
+    <value>for</value>
   </data>
   <data name="str_Seconds" xml:space="preserve">
-    <value> sekund.</value>
+    <value> second(s).</value>
   </data>
 </root>

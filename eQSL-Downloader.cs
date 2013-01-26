@@ -20,14 +20,18 @@ namespace eQSL_Downloader
 {
     public partial class frmMain : Form
     {
-        private static string Login, Password, SavingPath, CallSignList, progress, ADIFfilename;
+        private static string Login, Password, SavingPath, CallSignList, progress, ADIFfilename, lang;
         private Downloader eqsl;
         private List<Downloader.CallAndQTH> CallAndQTHList;
         private Dictionary<Downloader.CallAndQTH, List<string>> GetAllUrls;
         private int sleepSliderValue;
-      
+        private ComponentResourceManager rm;
+
         public frmMain()
         {
+            lang = null;
+            rm = new ComponentResourceManager(this.GetType());
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
             InitializeComponent();
             Literals();
             lblInfo.AutoSize = false;
@@ -66,11 +70,22 @@ namespace eQSL_Downloader
 
         private void Literals()
         {
+            foreach (ToolStripItem mnitem in mnuMain.Items)
+            {
+                mnitem.Text = rm.GetString(mnitem.Name + ".Text");
+            }
 
-            lblLogin.Text = "Login : ";
-            lblPassword.Text = "Hasło : ";
-            btnLogin.Text = "Zaloguj mnie";
-            btnNext.Text = "Dalej";
+            językToolStripMenuItem.Text = rm.GetString("językToolStripMenuItem.Text");
+            zmieńFolderZapisuToolStripMenuItem1.Text = rm.GetString("zmieńFolderZapisuToolStripMenuItem1.Text");
+            konfiguracjaToolStripMenuItem.Text = rm.GetString("konfiguracjaToolStripMenuItem.Text");
+
+
+            foreach(Control c in this.Controls)
+            {
+                c.Text = rm.GetString(c.Name + ".Text");
+            }
+
+           
 
         }
 
@@ -78,6 +93,7 @@ namespace eQSL_Downloader
         {
             using (FolderBrowserDialog fbd = new FolderBrowserDialog())
             {
+                
                 fbd.SelectedPath = SavingPath;
                 fbd.ShowDialog();
                 
@@ -88,7 +104,7 @@ namespace eQSL_Downloader
                     SavingPath += @"\";
                 }
 
-                AddInfo("Wybrano folder zapisu na : " + SavingPath);
+                AddInfo(rm.GetString("str_ChooseFolder") + SavingPath);
             }
         }
 
@@ -191,35 +207,53 @@ namespace eQSL_Downloader
 
         private void FirstLogon()
         {
+
+            if (!string.IsNullOrEmpty(lang))
+            {
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfoByIetfLanguageTag(lang);
+            }
+            else
+            {
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+            }
+
             ShowWaiting();
             ShowLogonPanel(false);
 
             Login = txtLogin.Text;
             Password = txtPassword.Text;
 
-            eqsl = new Downloader(Login, Password, SavingPath);
-            eqsl.Logon();
-            CallAndQTHList = eqsl.getCallAndQTH();
-
-            CallSignList = string.Join(", ", CallAndQTHList.Select(S => S.CallSign).Distinct().ToArray());
-
-            
-            if (CallAndQTHList.Count > 0)
+            try
             {
-                AddInfo("Pobieranie eQSLek będzie dla login(ów) : " + CallSignList, false, true);
-                ShowLogonPanel(false);
-                mnuMain.Items["importujADIFToolStripMenuItem"].Visible = true;
-                progress = "nxtGetADIFs";
-                ShowWaiting(false);
+                eqsl = new Downloader(Login, Password, SavingPath);
+                eqsl.Logon();
+                CallAndQTHList = eqsl.getCallAndQTH();
+
+                CallSignList = string.Join(", ", CallAndQTHList.Select(S => S.CallSign).Distinct().ToArray());
+
+
+                if (CallAndQTHList.Count > 0)
+                {
+                    AddInfo(rm.GetString("str_InfoCallSignList") + CallSignList, false, true);
+                    ShowLogonPanel(false);
+                    mnuMain.Items["importujADIFToolStripMenuItem"].Visible = true;
+                    progress = "nxtGetADIFs";
+                    ShowWaiting(false);
+                }
+                else
+                {
+                    ShowLogonPanel();
+                    AddInfo(rm.GetString("str_ErrorDuringLogon"));
+                    string response = eqsl.response;
+                    runBrowserThread(response);
+
+
+                }
             }
-            else
+            catch (Exception exc)
             {
+                AddInfo(exc.Message);
                 ShowLogonPanel();
-                AddInfo("Błąd podczas logowania, nie udało się pobrać żadnego znaku przypisanego do tego konta eQSL.cc");
-                string response = eqsl.response;
-                runBrowserThread(response);
-                
-                     
             }
         }
 
@@ -239,7 +273,6 @@ namespace eQSL_Downloader
             var br = sender as WebBrowser;
             if (br.Url == e.Url)
             {
-                Console.WriteLine("Natigated to {0}", e.Url);
                 Application.ExitThread();   // Stops the thread
             }
         }
@@ -253,6 +286,15 @@ namespace eQSL_Downloader
         private void Work()
         {
 
+            if (!string.IsNullOrEmpty(lang))
+            {
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfoByIetfLanguageTag(lang);
+            }
+            else
+            {
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+            }
+
             switch (progress)
             {
                 case "nxtGetADIFs":
@@ -263,12 +305,12 @@ namespace eQSL_Downloader
                     foreach (Downloader.CallAndQTH callqth in CallAndQTHList)
                     {
 
-                        AddInfo("rozpoczęcie pobierania pliku ADIF dla " + callqth.CallSign + " (QTH : " + callqth.QTH + ")");
+                        AddInfo(rm.GetString("str_beginDownloadADIFfor") + callqth.CallSign + " (QTH : " + callqth.QTH + ")");
 
                         eqsl.Logon(callqth.CallSign);
                         eqsl.getADIF(callqth);
 
-                        AddInfo(" ... zakończono.", false);
+                        AddInfo(rm.GetString("str_Done"), false);
 
                     }
                     progress = "nxtGetUrlsFromADIFs";
@@ -279,7 +321,7 @@ namespace eQSL_Downloader
 
                     ShowWaiting();
 
-                    AddInfo("Przekształcam rekordy ADIF na URLe do pobrania ...");
+                    AddInfo(rm.GetString("str_ConvertADIFtoURLs"));
 
                     GetAllUrls = new Dictionary<Downloader.CallAndQTH, List<string>>();
 
@@ -288,18 +330,18 @@ namespace eQSL_Downloader
                     {
                         if (!string.IsNullOrEmpty(callqth.QTH))
                         {
-                            AddInfo(callqth.CallSign + " ( " + callqth.QTH + " ) : rozpoczęcie konwersji ... ");
+                            AddInfo(callqth.CallSign + " ( " + callqth.QTH + " ) : " + rm.GetString("str_BeginConvert"));
                         }
                         else
                         {
-                            AddInfo(callqth.CallSign + " : rozpoczęcie konwersji ... ");
+                            AddInfo(callqth.CallSign + " : " + rm.GetString("str_BeginConvert"));
                         }
 
                         try
                         {
                             List<string> urls = eqsl.GetURLs(callqth);
                             GetAllUrls.Add(callqth, urls);
-                            AddInfo("zakończono (" + urls.Count.ToString() + ").", false);
+                            AddInfo(rm.GetString("str_Done") + " (" + urls.Count.ToString() + ").", false);
                             urls = null;
                         }
                         catch (Exception e)
@@ -308,8 +350,8 @@ namespace eQSL_Downloader
                         }
                     }
 
-                    
-                    AddInfo("Rozpoczęcie procedury pobierania eQSLek ...");
+
+                    AddInfo(rm.GetString("str_BeginDownloadProcedure"));
                     
                         foreach (Downloader.CallAndQTH callqth in CallAndQTHList)
                         {
@@ -318,7 +360,7 @@ namespace eQSL_Downloader
 
                             List<string> Urls = GetAllUrls[callqth];
 
-                            AddInfo("Rozpoczęto pobieranie eQSLek (" + Urls.Count.ToString() + ") dla " + callqth.CallSign + " ( " + callqth.QTH + " ) ...");
+                            AddInfo(rm.GetString("str_BeginDownload_eQSLs") + " (" + Urls.Count.ToString() + ") " + rm.GetString("str_for") + " " + callqth.CallSign + " ( " + callqth.QTH + " ) ...");
                             try
                             {
                                
@@ -342,7 +384,7 @@ namespace eQSL_Downloader
 
 
 
-                    AddInfo("Pobrano wszystkie eQSL dla wszystkich znaków.\nMożesz zakończyć działanie programu.");
+                    AddInfo(rm.GetString("str_Download_eQSLs_done"));
                     progress = "nxtXML";
                     ShowWaiting(false);
 
@@ -353,7 +395,7 @@ namespace eQSL_Downloader
                         ShowWaiting();
                         List<string> UrlsFromADIF = eqsl.getUrlsFromADIFFile(ADIFfilename);
 
-                        AddInfo("Rozpoczęto pobieranie eQSLek (" + UrlsFromADIF.Count.ToString() + ") dla " + Login + " ...");
+                        AddInfo(rm.GetString("str_BeginDownload_eQSLs") + " (" + UrlsFromADIF.Count.ToString() + ") " + rm.GetString("str_for") + " " + Login + " ...");
                         try
                         {
                             int Counter = 0;
@@ -408,17 +450,16 @@ namespace eQSL_Downloader
                      
                         writer.WriteEndElement();
                         writer.WriteEndDocument();
-                        AddInfo("Zakończono zapis pliku XML");
                     }
 
-                    MessageBox.Show("Zapraszam do ponownego skorzystania ;)");
+                    MessageBox.Show(rm.GetString("str_EndingMessage"));
 
                     this.Close();
 
                     break;
 
                 default:
-                    AddInfo("wystąpił błąd ...");
+                    AddInfo(rm.GetString("str_ErrorOccurred"));
                     break;
             }
         }
@@ -439,7 +480,7 @@ namespace eQSL_Downloader
   
         private void oProgramie_Click(object sender, EventArgs e)
         {
-            new About().ShowDialog();
+            new About(lang).ShowDialog();
         }
 
         private void imgSQ7MRU_Click(object sender, EventArgs e)
@@ -468,7 +509,7 @@ namespace eQSL_Downloader
                     }
                     else
                     {
-                        AddInfo("Login nie jest ten sam co w pliku ADIF");
+                        AddInfo(rm.GetString("str_BadLoginInADIF"));
                     }
                     
                }
@@ -478,14 +519,30 @@ namespace eQSL_Downloader
 
         private void konfiguracjaMenu_Click(object sender, EventArgs e)
         {
-            using (frmConfig cfgFrm = new frmConfig(sleepSliderValue))
+            using (frmConfig cfgFrm = new frmConfig(sleepSliderValue, lang))
             {
                 cfgFrm.ShowDialog();
                 sleepSliderValue = cfgFrm.sliderValue;
-                AddInfo("Wybrano opóźnienie w pobieraniu eQSLek na " + sleepSliderValue.ToString() + " sekund");
+                AddInfo(rm.GetString("str_ChooseDownloadDelay") + sleepSliderValue.ToString() + rm.GetString("str_Seconds"));
             }
 
 
+        }
+
+        private void polskiToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lang = null;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+            Literals();
+            this.Update();
+        }
+
+        private void angielskiToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lang = "en-US";
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfoByIetfLanguageTag("en-US");
+            Literals();
+            this.Update();
         }
 
  

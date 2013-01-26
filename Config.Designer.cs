@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmConfig));
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.lblSlider = new System.Windows.Forms.Label();
             this.slider = new System.Windows.Forms.TrackBar();
@@ -37,44 +38,32 @@
             // 
             // splitter1
             // 
-            this.splitter1.Location = new System.Drawing.Point(0, 0);
+            resources.ApplyResources(this.splitter1, "splitter1");
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(254, 96);
-            this.splitter1.TabIndex = 0;
             this.splitter1.TabStop = false;
             // 
             // lblSlider
             // 
-            this.lblSlider.AutoSize = true;
-            this.lblSlider.Location = new System.Drawing.Point(12, 9);
+            resources.ApplyResources(this.lblSlider, "lblSlider");
             this.lblSlider.Name = "lblSlider";
-            this.lblSlider.Size = new System.Drawing.Size(200, 13);
-            this.lblSlider.TabIndex = 1;
-            this.lblSlider.Text = "Opóźnienie w pobieraniu eQSL 0 sekund";
             // 
             // slider
             // 
-            this.slider.Location = new System.Drawing.Point(260, 0);
+            resources.ApplyResources(this.slider, "slider");
             this.slider.Name = "slider";
-            this.slider.Size = new System.Drawing.Size(325, 45);
-            this.slider.TabIndex = 2;
             this.slider.Scroll += new System.EventHandler(this.slider_Scroll);
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(476, 61);
+            resources.ApplyResources(this.btnOK, "btnOK");
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(103, 23);
-            this.btnOK.TabIndex = 3;
-            this.btnOK.Text = "Zatwierdź";
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // frmConfig
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(591, 96);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.slider);
             this.Controls.Add(this.lblSlider);
@@ -82,7 +71,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MinimizeBox = false;
             this.Name = "frmConfig";
-            this.Text = "Konfiguracja";
             this.Load += new System.EventHandler(this.frmConfig_Load);
             ((System.ComponentModel.ISupportInitialize)(this.slider)).EndInit();
             this.ResumeLayout(false);

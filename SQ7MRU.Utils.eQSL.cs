@@ -46,17 +46,23 @@ namespace SQ7MRU.Utils.eQSL
   
         public void Logon()
         {
-
-            using (WebClient wc = new WebClientEx(m_container))
+            try
             {
-                string URL = "http://eqsl.cc/qslcard/LoginFinish.cfm";
-                string PostData = "Callsign=" + login + "&EnteredPassword=" + password + "&Login=Go";
-                wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-                response = wc.UploadString(URL, PostData);
-                if (saveLog)
+                using (WebClient wc = new WebClientEx(m_container))
                 {
-                    Extensions.SaveStringToFile(response.Replace(password, "--cut--"),"LoginFinish.htm",path);
+                    string URL = "http://eqsl.cc/qslcard/LoginFinish.cfm";
+                    string PostData = "Callsign=" + login + "&EnteredPassword=" + password + "&Login=Go";
+                    wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                    response = wc.UploadString(URL, PostData);
+                    if (saveLog)
+                    {
+                        Extensions.SaveStringToFile(response.Replace(password, "--cut--"), "LoginFinish.htm", path);
+                    }
                 }
+            }
+            catch (Exception exc)
+            {
+                error += error;
             }
         }
 

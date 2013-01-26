@@ -40,6 +40,9 @@
             this.menuToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.zmieńFolderZapisuToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.konfiguracjaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.językToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.polskiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.angielskiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.oProgramieToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importujADIFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,75 +56,43 @@
             // 
             // lblLogin
             // 
-            this.lblLogin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblLogin.AutoSize = true;
-            this.lblLogin.Location = new System.Drawing.Point(146, 37);
+            resources.ApplyResources(this.lblLogin, "lblLogin");
             this.lblLogin.Name = "lblLogin";
-            this.lblLogin.Size = new System.Drawing.Size(43, 13);
-            this.lblLogin.TabIndex = 0;
-            this.lblLogin.Text = "lblLogin";
             // 
             // lblPassword
             // 
-            this.lblPassword.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblPassword.AutoSize = true;
-            this.lblPassword.Location = new System.Drawing.Point(146, 56);
+            resources.ApplyResources(this.lblPassword, "lblPassword");
             this.lblPassword.Name = "lblPassword";
-            this.lblPassword.Size = new System.Drawing.Size(63, 13);
-            this.lblPassword.TabIndex = 1;
-            this.lblPassword.Text = "lblPassword";
             // 
             // btnLogin
             // 
-            this.btnLogin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLogin.Location = new System.Drawing.Point(319, 27);
+            resources.ApplyResources(this.btnLogin, "btnLogin");
             this.btnLogin.Name = "btnLogin";
-            this.btnLogin.Size = new System.Drawing.Size(138, 49);
-            this.btnLogin.TabIndex = 2;
-            this.btnLogin.Text = "btnLogin";
             this.btnLogin.UseVisualStyleBackColor = true;
             this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
             // 
             // txtLogin
             // 
-            this.txtLogin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLogin.Location = new System.Drawing.Point(215, 30);
+            resources.ApplyResources(this.txtLogin, "txtLogin");
             this.txtLogin.Name = "txtLogin";
-            this.txtLogin.Size = new System.Drawing.Size(98, 20);
-            this.txtLogin.TabIndex = 3;
             // 
             // txtPassword
             // 
-            this.txtPassword.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtPassword.Location = new System.Drawing.Point(215, 56);
+            resources.ApplyResources(this.txtPassword, "txtPassword");
             this.txtPassword.Name = "txtPassword";
-            this.txtPassword.PasswordChar = '*';
-            this.txtPassword.Size = new System.Drawing.Size(98, 20);
-            this.txtPassword.TabIndex = 4;
             // 
             // btnNext
             // 
-            this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnNext.Enabled = false;
-            this.btnNext.Location = new System.Drawing.Point(343, 209);
+            resources.ApplyResources(this.btnNext, "btnNext");
             this.btnNext.Name = "btnNext";
-            this.btnNext.Size = new System.Drawing.Size(114, 23);
-            this.btnNext.TabIndex = 6;
-            this.btnNext.Text = "btnNext";
             this.btnNext.UseVisualStyleBackColor = true;
             this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
             // 
             // lblInfo
             // 
-            this.lblInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblInfo.Location = new System.Drawing.Point(12, 77);
+            resources.ApplyResources(this.lblInfo, "lblInfo");
             this.lblInfo.Name = "lblInfo";
             this.lblInfo.ReadOnly = true;
-            this.lblInfo.Size = new System.Drawing.Size(445, 126);
-            this.lblInfo.TabIndex = 7;
-            this.lblInfo.Text = "";
             // 
             // mnuMain
             // 
@@ -129,48 +100,60 @@
             this.menuToolStripMenuItem1,
             this.oProgramieToolStripMenuItem,
             this.importujADIFToolStripMenuItem});
-            this.mnuMain.Location = new System.Drawing.Point(0, 0);
+            resources.ApplyResources(this.mnuMain, "mnuMain");
             this.mnuMain.Name = "mnuMain";
-            this.mnuMain.Size = new System.Drawing.Size(469, 24);
-            this.mnuMain.TabIndex = 10;
-            this.mnuMain.Text = "menuStrip1";
             // 
             // menuToolStripMenuItem1
             // 
             this.menuToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.zmieńFolderZapisuToolStripMenuItem1,
-            this.konfiguracjaToolStripMenuItem});
+            this.konfiguracjaToolStripMenuItem,
+            this.językToolStripMenuItem});
             this.menuToolStripMenuItem1.Name = "menuToolStripMenuItem1";
-            this.menuToolStripMenuItem1.Size = new System.Drawing.Size(45, 20);
-            this.menuToolStripMenuItem1.Text = "Menu";
+            resources.ApplyResources(this.menuToolStripMenuItem1, "menuToolStripMenuItem1");
             // 
             // zmieńFolderZapisuToolStripMenuItem1
             // 
             this.zmieńFolderZapisuToolStripMenuItem1.Name = "zmieńFolderZapisuToolStripMenuItem1";
-            this.zmieńFolderZapisuToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
-            this.zmieńFolderZapisuToolStripMenuItem1.Text = "Zmień folder zapisu";
+            resources.ApplyResources(this.zmieńFolderZapisuToolStripMenuItem1, "zmieńFolderZapisuToolStripMenuItem1");
             this.zmieńFolderZapisuToolStripMenuItem1.Click += new System.EventHandler(this.zmieńFolderZapisu_Click);
             // 
             // konfiguracjaToolStripMenuItem
             // 
             this.konfiguracjaToolStripMenuItem.Name = "konfiguracjaToolStripMenuItem";
-            this.konfiguracjaToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.konfiguracjaToolStripMenuItem.Text = "Konfiguracja";
+            resources.ApplyResources(this.konfiguracjaToolStripMenuItem, "konfiguracjaToolStripMenuItem");
             this.konfiguracjaToolStripMenuItem.Click += new System.EventHandler(this.konfiguracjaMenu_Click);
+            // 
+            // językToolStripMenuItem
+            // 
+            this.językToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.polskiToolStripMenuItem,
+            this.angielskiToolStripMenuItem});
+            this.językToolStripMenuItem.Name = "językToolStripMenuItem";
+            resources.ApplyResources(this.językToolStripMenuItem, "językToolStripMenuItem");
+            // 
+            // polskiToolStripMenuItem
+            // 
+            this.polskiToolStripMenuItem.Name = "polskiToolStripMenuItem";
+            resources.ApplyResources(this.polskiToolStripMenuItem, "polskiToolStripMenuItem");
+            this.polskiToolStripMenuItem.Click += new System.EventHandler(this.polskiToolStripMenuItem_Click);
+            // 
+            // angielskiToolStripMenuItem
+            // 
+            this.angielskiToolStripMenuItem.Name = "angielskiToolStripMenuItem";
+            resources.ApplyResources(this.angielskiToolStripMenuItem, "angielskiToolStripMenuItem");
+            this.angielskiToolStripMenuItem.Click += new System.EventHandler(this.angielskiToolStripMenuItem_Click);
             // 
             // oProgramieToolStripMenuItem
             // 
             this.oProgramieToolStripMenuItem.Name = "oProgramieToolStripMenuItem";
-            this.oProgramieToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
-            this.oProgramieToolStripMenuItem.Text = "O programie";
+            resources.ApplyResources(this.oProgramieToolStripMenuItem, "oProgramieToolStripMenuItem");
             this.oProgramieToolStripMenuItem.Click += new System.EventHandler(this.oProgramie_Click);
             // 
             // importujADIFToolStripMenuItem
             // 
             this.importujADIFToolStripMenuItem.Name = "importujADIFToolStripMenuItem";
-            this.importujADIFToolStripMenuItem.Size = new System.Drawing.Size(87, 20);
-            this.importujADIFToolStripMenuItem.Text = "Importuj ADIF";
-            this.importujADIFToolStripMenuItem.Visible = false;
+            resources.ApplyResources(this.importujADIFToolStripMenuItem, "importujADIFToolStripMenuItem");
             this.importujADIFToolStripMenuItem.Click += new System.EventHandler(this.importujADIFToolStripMenuItem_Click);
             // 
             // menuToolStripMenuItem
@@ -178,44 +161,33 @@
             this.menuToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.zmieńFolderZapisuToolStripMenuItem});
             this.menuToolStripMenuItem.Name = "menuToolStripMenuItem";
-            this.menuToolStripMenuItem.Size = new System.Drawing.Size(45, 20);
-            this.menuToolStripMenuItem.Text = "Menu";
+            resources.ApplyResources(this.menuToolStripMenuItem, "menuToolStripMenuItem");
             // 
             // zmieńFolderZapisuToolStripMenuItem
             // 
             this.zmieńFolderZapisuToolStripMenuItem.Name = "zmieńFolderZapisuToolStripMenuItem";
-            this.zmieńFolderZapisuToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.zmieńFolderZapisuToolStripMenuItem.Text = "Zmień folder zapisu";
+            resources.ApplyResources(this.zmieńFolderZapisuToolStripMenuItem, "zmieńFolderZapisuToolStripMenuItem");
             // 
             // imgSQ7MRU
             // 
             this.imgSQ7MRU.Cursor = System.Windows.Forms.Cursors.Hand;
             this.imgSQ7MRU.Image = global::eQSL_Downloader.Properties.Resources.sq7mru;
-            this.imgSQ7MRU.Location = new System.Drawing.Point(13, 39);
+            resources.ApplyResources(this.imgSQ7MRU, "imgSQ7MRU");
             this.imgSQ7MRU.Name = "imgSQ7MRU";
-            this.imgSQ7MRU.Size = new System.Drawing.Size(127, 32);
-            this.imgSQ7MRU.TabIndex = 12;
             this.imgSQ7MRU.TabStop = false;
             this.imgSQ7MRU.Click += new System.EventHandler(this.imgSQ7MRU_Click);
             // 
             // imgWait
             // 
-            this.imgWait.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.imgWait, "imgWait");
             this.imgWait.Image = global::eQSL_Downloader.Properties.Resources.progress_bar;
-            this.imgWait.Location = new System.Drawing.Point(13, 209);
             this.imgWait.Name = "imgWait";
-            this.imgWait.Size = new System.Drawing.Size(324, 23);
-            this.imgWait.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.imgWait.TabIndex = 11;
             this.imgWait.TabStop = false;
-            this.imgWait.Visible = false;
             // 
             // frmMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(469, 246);
             this.Controls.Add(this.imgSQ7MRU);
             this.Controls.Add(this.imgWait);
             this.Controls.Add(this.lblInfo);
@@ -226,11 +198,8 @@
             this.Controls.Add(this.lblPassword);
             this.Controls.Add(this.lblLogin);
             this.Controls.Add(this.mnuMain);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.mnuMain;
             this.Name = "frmMain";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "eQSL Downloader";
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.mnuMain.ResumeLayout(false);
             this.mnuMain.PerformLayout();
@@ -260,6 +229,9 @@
         private System.Windows.Forms.PictureBox imgSQ7MRU;
         private System.Windows.Forms.ToolStripMenuItem importujADIFToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem konfiguracjaToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem językToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem polskiToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem angielskiToolStripMenuItem;
     }
 }
 
