@@ -13,6 +13,7 @@ using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Xml;
+using Microsoft.Win32;
 using SQ7MRU.Utils.eQSL;
 using SQ7MRU.Utils.ADIF;
 
@@ -35,7 +36,7 @@ namespace eQSL_Downloader
             InitializeComponent();
             Literals();
             lblInfo.AutoSize = false;
-            SavingPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\";
+            SavingPath = readPathFromRegistry();
             sleepSliderValue = 0;
 
         }
@@ -103,7 +104,7 @@ namespace eQSL_Downloader
                 {
                     SavingPath += @"\";
                 }
-
+                savePathToRegistry(SavingPath);
                 AddInfo(rm.GetString("str_ChooseFolder") + SavingPath);
             }
         }
@@ -545,8 +546,23 @@ namespace eQSL_Downloader
             this.Update();
         }
 
- 
 
+        private string readPathFromRegistry()
+        {
+            try
+            {
+                return (string)Registry.CurrentUser.OpenSubKey(@"Software\SQ7MRU\eQSLDownloader").GetValue("SavingPath");
+            }
+            catch (Exception exc) 
+            {
+                return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\";
+            }
+        }
+
+        private void savePathToRegistry(string savingPath)
+        {
+            Registry.CurrentUser.CreateSubKey(@"Software\SQ7MRU\eQSLDownloader").SetValue("SavingPath", savingPath);
+        }
 
     }
 }
