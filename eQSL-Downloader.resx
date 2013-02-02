@@ -592,7 +592,7 @@
     <value>... zakończono.</value>
   </data>
   <data name="str_Download_eQSLs_done" xml:space="preserve">
-    <value>Pobrano wszystkie eQSL dla wszystkich znaków.\nMożesz zakończyć działanie programu.</value>
+    <value>Pobrano wszystkie eQSL dla wszystkich znaków. Możesz zakończyć działanie programu.</value>
   </data>
   <data name="str_EndingMessage" xml:space="preserve">
     <value>Zapraszam do ponownego skorzystania ;)</value>

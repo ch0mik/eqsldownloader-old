@@ -69,6 +69,22 @@ namespace eQSL_Downloader
             
         }
 
+        private void EndProgram()
+        {
+
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new Action(delegate
+                {
+                    EndProgram();
+                }));
+                return;
+            }
+
+            this.Close();
+
+        }
+
         private void Literals()
         {
             foreach (ToolStripItem mnitem in mnuMain.Items)
@@ -423,45 +439,66 @@ namespace eQSL_Downloader
 
                     ShowWaiting();
 
-                    using (XmlWriter writer = XmlWriter.Create(SavingPath + "eQSL.xml"))
-                    {
-                        writer.WriteStartDocument();
-                        writer.WriteStartElement("eQSL");
-
-
-                        foreach (Downloader.CallAndQTH callqth in CallAndQTHList)
-                        {
-                            List<string> Urls = GetAllUrls[callqth];
-                            
-                            foreach (string Url in Urls)
-                            {
-
-                                writer.WriteStartElement("QSO");
-                                Dictionary<string, string> dic = Downloader.UrlHelper.Decode(Url).Replace("http://eqsl.cc/qslcard/DisplayeQSL.cfm?", "").Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries).ToDictionary(s => s.Split('=')[0].ToLower(), s => s.Split('=')[1].ToUpper());
-                                writer.WriteElementString("callsign", dic["callsign"].ToString());
-                                writer.WriteElementString("band", dic["band"].ToString());
-                                writer.WriteElementString("mode", dic["mode"].ToString());
-                                writer.WriteElementString("qsodate", dic["qsodate"].Replace(":00.0", "").ToString());
-                                writer.WriteElementString("filename", eqsl.FilenameFromURL(Url).ToString());
-                                dic = null;
-                                writer.WriteEndElement();
-
-                            }
-                        }
-                     
-                        writer.WriteEndElement();
-                        writer.WriteEndDocument();
-                    }
+                    GenerateXMLandGallery();
 
                     MessageBox.Show(rm.GetString("str_EndingMessage"));
 
-                    this.Close();
+                    EndProgram();
 
                     break;
 
                 default:
                     AddInfo(rm.GetString("str_ErrorOccurred"));
                     break;
+            }
+        }
+
+        
+        private void GenerateXMLandGallery(string GalleryName = null)
+        {
+
+            using (XmlWriter writer = XmlWriter.Create(SavingPath + "eQSL.xml"))
+            {
+                writer.WriteStartDocument();
+                writer.WriteStartElement("eQSL");
+
+                //
+                foreach (string callsign in CallAndQTHList.Select(S => S.CallSign).Distinct().ToArray())
+                {
+                    writer.WriteStartElement("Callsign");
+                    writer.WriteAttributeString("value", callsign);
+               
+                    string[] files = Directory.GetFiles(SavingPath + callsign.Replace("/","_") + "\\", "*.JPG");
+
+                    foreach (string file in files)
+                    {
+
+                        writer.WriteStartElement("QSO");
+                        writer.WriteElementString("filename", file.Replace(SavingPath, ""));
+
+                        string description = "";
+                        try 
+                        {
+                            string[] tempArr = file.Replace(SavingPath + callsign.Replace("/", "_") + "\\", "").Replace(".JPG","").Split(new char[] { '_' });
+                            description += tempArr[0].Replace("-", "/") + ", ";
+                            description += "QSO UTC Time : " + Extensions.ConvertStringToFormattedDateTime(tempArr[1]) + ", ";
+                            description += "Band : " + tempArr[2] + ", ";
+                            description += "Mode : " + tempArr[3];
+                        }
+                        catch(Exception exc){}
+
+                        writer.WriteElementString("description", description);
+                        
+                        writer.WriteEndElement();
+
+                    }
+
+                    writer.WriteEndElement();
+
+                }
+
+                writer.WriteEndElement();
+                writer.WriteEndDocument();
             }
         }
 

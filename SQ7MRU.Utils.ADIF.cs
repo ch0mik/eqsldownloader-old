@@ -235,8 +235,25 @@ namespace SQ7MRU.Utils.ADIF
             return src.GetType().GetProperty(propName).GetValue(src, null);
         }
 
-        
 
+        internal static string ConvertStringToFormattedDateTime(string QSODateTimeOn, string FormatIn = "yyyyMMddHHmm", string FormatOut = "yyyy-MM-dd HH:mm")
+        {
+            string _datetimeconverted = QSODateTimeOn;
+
+            if (!(string.IsNullOrEmpty(QSODateTimeOn)))
+            {
+                try
+                {
+                    _datetimeconverted = DateTime.ParseExact(QSODateTimeOn.Replace(" ", ""), FormatIn, null).ToString(FormatOut);
+                }
+                catch (Exception e)
+                {
+                    _datetimeconverted = QSODateTimeOn;
+                }
+            }
+
+            return _datetimeconverted;
+        }
 
     }
 

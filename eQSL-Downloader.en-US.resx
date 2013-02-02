@@ -595,7 +595,7 @@
     <value> ... done.</value>
   </data>
   <data name="str_Download_eQSLs_done" xml:space="preserve">
-    <value>Download all eQSL for all callsigns.\nYou can exit the program.</value>
+    <value>Download all eQSL for all callsigns. You can exit the program.</value>
   </data>
   <data name="str_EndingMessage" xml:space="preserve">
     <value>Feel free to re-use;)</value>
