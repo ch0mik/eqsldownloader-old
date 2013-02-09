@@ -311,52 +311,6 @@ namespace SQ7MRU.Utils.eQSL
         }
 
 
-        // tips from http://stackoverflow.com/questions/1777221/using-cookiecontainer-with-webclient-class
-        public class WebClientEx : WebClient
-        {
-            public WebClientEx(CookieContainer container)
-            {
-                this.container = container;
-            }
-
-            private readonly CookieContainer container = new CookieContainer();
-
-            protected override WebRequest GetWebRequest(Uri address)
-            {
-                WebRequest r = base.GetWebRequest(address);
-                var request = r as HttpWebRequest;
-                if (request != null)
-                {
-                    request.CookieContainer = container;
-                }
-                return r;
-            }
-
-            protected override WebResponse GetWebResponse(WebRequest request, IAsyncResult result)
-            {
-                WebResponse response = base.GetWebResponse(request, result);
-                ReadCookies(response);
-                return response;
-            }
-
-            protected override WebResponse GetWebResponse(WebRequest request)
-            {
-                WebResponse response = base.GetWebResponse(request);
-                ReadCookies(response);
-                return response;
-            }
-
-            private void ReadCookies(WebResponse r)
-            {
-                var response = r as HttpWebResponse;
-                if (response != null)
-                {
-                    CookieCollection cookies = response.Cookies;
-                    container.Add(cookies);
-                }
-            }
-        }
-
         public class CallAndQTH
         {
             public string CallSign { get; set; }
@@ -405,4 +359,163 @@ namespace SQ7MRU.Utils.eQSL
         }
 
     }
+
+    public class iQSLHRDLOG
+    {
+        public readonly CookieContainer m_container;
+        private string path, callsign;
+        public string response, error;
+        public bool saveLog;
+
+        public iQSLHRDLOG(string Callsign, string Path = null, bool SaveLog = false)
+        {
+            m_container = new CookieContainer();
+            saveLog = SaveLog;
+
+            if (string.IsNullOrEmpty(Path))
+            {
+                path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\";
+            }
+            else
+            {
+                path = Path;
+            }
+            callsign = Callsign;
+        }
+
+        private List<string> HTMLtoList(string HTML)
+        {
+            List<string> UrlList = Regex.Split(HTML, @"((PrintQsl)+[\w\d:#@%/;$()~_?\+-=\\\.&]*)").Where(S => S.Contains("PrintQsl.aspx?id=")).ToList();
+            return UrlList;
+
+        }
+
+        public List<string> GetUrls()
+        {
+            string _old_string = "PrintQsl.aspx?id=";
+            string _new_string = "http://www.hrdlog.net/qsl.aspx?id=";
+
+            try
+            {
+                using (WebClientEx wc = new WebClientEx(m_container))
+                {
+                    string POSTDATA = "ctl00$ContentPlaceHolder1$TbCallsign=" + callsign + "&ctl00$ContentPlaceHolder1$CbAllQsl=on";
+                    string URL = "http://www.hrdlog.net/searchqso.aspx?log=";
+                    wc.Cookies.Add(new Uri(URL), new Cookie("callsign", callsign.ToUpper()));
+                    wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                    response = wc.UploadString(URL, POSTDATA);
+
+                    List<string> _list = new List<string>();
+                    foreach (string str in HTMLtoList(response))
+                    {
+                        _list.Add(str.Replace(_old_string, _new_string));
+                    }
+
+                    return _list;
+                }
+            }
+            catch (Exception exc)
+            {
+                error += exc.Message;
+                return null;
+            }
+        }
+
+        public void GetJPGfromURL(string URL, int SleepTime = 0, string Subfolder = "iQSL_HRDLOG")
+        {
+         
+            CreateCallsingSubFolder();
+            
+            string pathfile = path + Subfolder + @"\" + FilenameFromURL(URL);
+
+
+            if (!File.Exists(pathfile) || new FileInfo(pathfile).Length == 0)
+            {
+                Thread.Sleep(SleepTime);
+
+                using (WebClient wc = new WebClientEx(m_container))
+                {
+                    wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                    wc.DownloadFile(URL, pathfile);
+                }
+            }
+
+        }
+
+        public void NewThreadOfGetJPGfromURL(List<string> Urls)
+        {
+            foreach (string Url in Urls)
+            {
+                var t = new Thread(() => GetJPGfromURL(Url));
+                t.Start();
+            }
+        }
+
+        public void NewThreadOfGetJPGfromURL(string Url, int SleepTime = 0, string Subfolder = "iQSL_HRDLOG")
+        {
+            var t = new Thread(() => GetJPGfromURL(Url, SleepTime, Subfolder));
+            t.Start();
+            t.Join();
+        }
+
+        public string FilenameFromURL(string URL)
+        {
+            return URL.ToLower().Replace("http://www.hrdlog.net/qsl.aspx?id=", "") + ".JPG";            
+        }
+
+        private void CreateCallsingSubFolder()
+        {
+            bool folderExists = Directory.Exists(path + "iQSL_HRDLOG");
+            if (!folderExists)
+                Directory.CreateDirectory(path + "iQSL_HRDLOG");
+        }
+    }
+
+    // tips from http://stackoverflow.com/questions/1777221/using-cookiecontainer-with-webclient-class
+    public class WebClientEx : WebClient
+    {
+        public WebClientEx(CookieContainer container)
+        {
+            this.container = container;
+        }
+
+        private readonly CookieContainer container = new CookieContainer();
+        public CookieContainer Cookies { get { return container; } }
+
+        protected override WebRequest GetWebRequest(Uri address)
+        {
+            WebRequest r = base.GetWebRequest(address);
+            var request = r as HttpWebRequest;
+            if (request != null)
+            {
+                request.CookieContainer = container;
+            }
+            return r;
+        }
+
+        protected override WebResponse GetWebResponse(WebRequest request, IAsyncResult result)
+        {
+            WebResponse response = base.GetWebResponse(request, result);
+            ReadCookies(response);
+            return response;
+        }
+
+        protected override WebResponse GetWebResponse(WebRequest request)
+        {
+            WebResponse response = base.GetWebResponse(request);
+            ReadCookies(response);
+            return response;
+        }
+
+        private void ReadCookies(WebResponse r)
+        {
+            var response = r as HttpWebResponse;
+            if (response != null)
+            {
+                CookieCollection cookies = response.Cookies;
+                container.Add(cookies);
+            }
+        }
+    }
+
 }

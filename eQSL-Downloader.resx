@@ -331,55 +331,61 @@
     <value>17, 17</value>
   </data>
   <data name="zmieńFolderZapisuToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="zmieńFolderZapisuToolStripMenuItem1.Text" xml:space="preserve">
     <value>Zmień folder</value>
   </data>
   <data name="konfiguracjaToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="konfiguracjaToolStripMenuItem.Text" xml:space="preserve">
     <value>Konfiguracja</value>
   </data>
   <data name="polskiToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 22</value>
+    <value>112, 22</value>
   </data>
   <data name="polskiToolStripMenuItem.Text" xml:space="preserve">
     <value>Polski</value>
   </data>
   <data name="angielskiToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 22</value>
+    <value>112, 22</value>
   </data>
   <data name="angielskiToolStripMenuItem.Text" xml:space="preserve">
     <value>English</value>
   </data>
   <data name="językToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="językToolStripMenuItem.Text" xml:space="preserve">
     <value>Język</value>
   </data>
   <data name="menuToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>45, 20</value>
+    <value>50, 20</value>
   </data>
   <data name="menuToolStripMenuItem1.Text" xml:space="preserve">
     <value>Menu</value>
   </data>
   <data name="oProgramieToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>78, 20</value>
+    <value>86, 20</value>
   </data>
   <data name="oProgramieToolStripMenuItem.Text" xml:space="preserve">
     <value>O programie</value>
   </data>
   <data name="importujADIFToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>97, 20</value>
+    <value>128, 20</value>
   </data>
   <data name="importujADIFToolStripMenuItem.Text" xml:space="preserve">
     <value>Zaimportuj plik ADIF</value>
   </data>
   <data name="importujADIFToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
+  </data>
+  <data name="iQSLHRDLOGnetToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>113, 20</value>
+  </data>
+  <data name="iQSLHRDLOGnetToolStripMenuItem.Text" xml:space="preserve">
+    <value>iQSL HRDLOG.net</value>
   </data>
   <data name="mnuMain.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
@@ -406,7 +412,7 @@
     <value>9</value>
   </data>
   <data name="zmieńFolderZapisuToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 22</value>
+    <value>178, 22</value>
   </data>
   <data name="zmieńFolderZapisuToolStripMenuItem.Text" xml:space="preserve">
     <value>Zmień folder zapisu</value>
@@ -552,6 +558,12 @@
   <data name="&gt;&gt;zmieńFolderZapisuToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;iQSLHRDLOGnetToolStripMenuItem.Name" xml:space="preserve">
+    <value>iQSLHRDLOGnetToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;iQSLHRDLOGnetToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>frmMain</value>
   </data>
@@ -605,5 +617,14 @@
   </data>
   <data name="str_Seconds" xml:space="preserve">
     <value> sekund.</value>
+  </data>
+  <data name="str_iQSLtoDownload" xml:space="preserve">
+    <value>iQSL do pobrania :</value>
+  </data>
+  <data name="str_iQSLisEmpty" xml:space="preserve">
+    <value>Brak iQSL do pobrania</value>
+  </data>
+  <data name="str_BeginDownload_iQSL" xml:space="preserve">
+    <value>Rozpoczęto pobieranie iQSL z hrdlog.net ...</value>
   </data>
 </root>

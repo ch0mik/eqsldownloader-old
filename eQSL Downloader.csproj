@@ -28,8 +28,8 @@
     <InstallUrl>http://pj.ksoft.biz/download/eQSL/</InstallUrl>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>11</ApplicationRevision>
-    <ApplicationVersion>0.3.0.%2a</ApplicationVersion>
+    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationVersion>0.4.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -100,8 +100,16 @@
     <Compile Include="frmError.Designer.cs">
       <DependentUpon>frmError.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmHRDLOG.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmHRDLOG.Designer.cs">
+      <DependentUpon>frmHRDLOG.cs</DependentUpon>
+    </Compile>
     <Compile Include="SQ7MRU.Utils.ADIF.cs" />
-    <Compile Include="SQ7MRU.Utils.eQSL.cs" />
+    <Compile Include="SQ7MRU.Utils.eQSL.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="eQSL-Downloader.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -130,6 +138,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmError.resx">
       <DependentUpon>frmError.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmHRDLOG.en-US.resx">
+      <DependentUpon>frmHRDLOG.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmHRDLOG.resx">
+      <DependentUpon>frmHRDLOG.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

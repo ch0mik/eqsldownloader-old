@@ -609,4 +609,13 @@
   <data name="str_Seconds" xml:space="preserve">
     <value> second(s).</value>
   </data>
+  <data name="str_iQSLtoDownload" xml:space="preserve">
+    <value>iQSL to Download : </value>
+  </data>
+  <data name="str_iQSLisEmpty" xml:space="preserve">
+    <value>No iQSL to download</value>
+  </data>
+  <data name="str_BeginDownload_iQSL" xml:space="preserve">
+    <value>Begin download iQSLs from hrdlog.net ...</value>
+  </data>
 </root>

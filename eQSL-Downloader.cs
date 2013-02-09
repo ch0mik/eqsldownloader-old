@@ -385,8 +385,6 @@ namespace eQSL_Downloader
 
                                 foreach (string Url in Urls)
                                 {
-
-                                    //Download single eQSL as New Thread
                                     eqsl.NewThreadOfGetJPGfromURL(Url, sleepSliderValue * 1000, callqth.CallSign);
                                     Counter += 1;
                                     AddInfo(Counter + "/" + Urls.Count + " : " + eqsl.FilenameFromURL(Url));
@@ -599,6 +597,56 @@ namespace eQSL_Downloader
         private void savePathToRegistry(string savingPath)
         {
             Registry.CurrentUser.CreateSubKey(@"Software\SQ7MRU\eQSLDownloader").SetValue("SavingPath", savingPath);
+        }
+
+        private void iQSL_Work()
+        {
+            List<string> Urls;
+
+            using (frmHRDLOG frmiQSL = new frmHRDLOG(txtLogin.Text, lang))
+            {
+                frmiQSL.ShowDialog();
+                Urls = frmiQSL.Urls;
+                string hrdloglogin = frmiQSL.callsign;
+
+                if (Urls.Count > 0)
+                {
+                    AddInfo(rm.GetString("str_iQSLtoDownload") + Urls.Count.ToString());
+                    AddInfo(rm.GetString("str_BeginDownload_iQSL"));
+
+                    try
+                    {
+                        iQSLHRDLOG iqsl = new iQSLHRDLOG(hrdloglogin, SavingPath);
+
+                        int Counter = 0;
+
+                        foreach (string Url in Urls)
+                        {
+                            iqsl.NewThreadOfGetJPGfromURL(Url, sleepSliderValue * 1000);
+                            Counter += 1;
+                            AddInfo(Counter + "/" + Urls.Count + " : " + iqsl.FilenameFromURL(Url));
+                        }
+
+                        AddInfo(rm.GetString("str_Done")    );       
+
+                        iqsl = null;
+                    }
+                    catch (Exception exc)
+                    {
+                        AddInfo(exc.Message);
+                    }
+                }
+                else
+                {
+                    AddInfo(rm.GetString("str_iQSLisEmpty"));
+                }
+
+            }
+        }
+
+        private void iQSLHRDLOGnetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new Thread(new ThreadStart(iQSL_Work)).Start();
         }
 
     }

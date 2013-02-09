@@ -49,6 +49,7 @@
             this.zmieńFolderZapisuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imgSQ7MRU = new System.Windows.Forms.PictureBox();
             this.imgWait = new System.Windows.Forms.PictureBox();
+            this.iQSLHRDLOGnetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imgSQ7MRU)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imgWait)).BeginInit();
@@ -99,7 +100,8 @@
             this.mnuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuToolStripMenuItem1,
             this.oProgramieToolStripMenuItem,
-            this.importujADIFToolStripMenuItem});
+            this.importujADIFToolStripMenuItem,
+            this.iQSLHRDLOGnetToolStripMenuItem});
             resources.ApplyResources(this.mnuMain, "mnuMain");
             this.mnuMain.Name = "mnuMain";
             // 
@@ -184,6 +186,12 @@
             this.imgWait.Name = "imgWait";
             this.imgWait.TabStop = false;
             // 
+            // iQSLHRDLOGnetToolStripMenuItem
+            // 
+            this.iQSLHRDLOGnetToolStripMenuItem.Name = "iQSLHRDLOGnetToolStripMenuItem";
+            resources.ApplyResources(this.iQSLHRDLOGnetToolStripMenuItem, "iQSLHRDLOGnetToolStripMenuItem");
+            this.iQSLHRDLOGnetToolStripMenuItem.Click += new System.EventHandler(this.iQSLHRDLOGnetToolStripMenuItem_Click);
+            // 
             // frmMain
             // 
             resources.ApplyResources(this, "$this");
@@ -232,6 +240,7 @@
         private System.Windows.Forms.ToolStripMenuItem językToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem polskiToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem angielskiToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem iQSLHRDLOGnetToolStripMenuItem;
     }
 }
 
