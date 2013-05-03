@@ -54,6 +54,17 @@ namespace SQ7MRU.Utils.eQSL
                     string PostData = "Callsign=" + login + "&EnteredPassword=" + password + "&Login=Go";
                     wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                     response = wc.UploadString(URL, PostData);
+
+                    if(response.Contains(@">Select one<"))
+                    {
+                        string[] QTHNicknamesArray = Regex.Split(response, @"NAME=""HamID"" VALUE=""(.*)""").Where(S => S.Length < 50).ToArray();
+                     
+                        PostData = "HamID=" + QTHNicknamesArray[0] + "&EnteredPassword=" + password + "&SelectCallsign=Log+In";
+                        wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                        response = wc.UploadString(URL, PostData);
+
+                    }
+                        
                     if (saveLog)
                     {
                         Extensions.SaveStringToFile(response.Replace(password, "--cut--"), "LoginFinish.htm", path);
@@ -66,13 +77,22 @@ namespace SQ7MRU.Utils.eQSL
             }
         }
 
-        public void Logon(string CallSign)
+        public void Logon(string CallSign, string HamID = null)
         {
 
             using (WebClient wc = new WebClientEx(m_container))
             {
                 string URL = "http://eqsl.cc/qslcard/LoginFinish.cfm";
-                string PostData = "Callsign=" + CallSign + "&EnteredPassword=" + password + "&Login=Go";
+                string PostData;
+
+                if (!string.IsNullOrEmpty(HamID))
+                {
+                    PostData = "HamID=" + HamID + "&EnteredPassword=" + password + "&SelectCallsign=Log+In";
+                }
+                else
+                {
+                    PostData = "Callsign=" + CallSign + "&EnteredPassword=" + password + "&Login=Go";
+                }
                 wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                 response = wc.UploadString(URL, PostData);
             }
@@ -105,6 +125,8 @@ namespace SQ7MRU.Utils.eQSL
                 else
                 {
                     string[] CallAndQTHArray = Regex.Split(response, @"<TD\b[^>]*>(.*?)\<BR\>\((.*?)\)</TD>\r\n").Where(S => S.Length < 50).ToArray();
+                    string[] HamIDArray = Regex.Split(response, @"NAME=""HamID"" VALUE=""(.*)""").Where(S => S.Length < 50).ToArray();
+
 
                     if (CallAndQTHArray.Length % 2 == 0)
                     {
@@ -115,6 +137,7 @@ namespace SQ7MRU.Utils.eQSL
                                 CallAndQTH callqth = new CallAndQTH();
                                 callqth.CallSign = CallAndQTHArray[i];
                                 callqth.QTH = CallAndQTHArray[i + 1];
+                                callqth.HamID = HamIDArray[i + 1];
                                 CallAndQTHList.Add(callqth);
                                 callqth = null;
                                 i++;
@@ -314,7 +337,8 @@ namespace SQ7MRU.Utils.eQSL
         public class CallAndQTH
         {
             public string CallSign { get; set; }
-            public string QTH { get; set; } 
+            public string QTH { get; set; }
+            public string HamID { get; set; }
         }
    
 

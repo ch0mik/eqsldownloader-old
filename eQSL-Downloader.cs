@@ -373,7 +373,7 @@ namespace eQSL_Downloader
                         foreach (Downloader.CallAndQTH callqth in CallAndQTHList)
                         {
 
-                            eqsl.Logon(callqth.CallSign);
+                            eqsl.Logon(callqth.CallSign,callqth.HamID);
 
                             List<string> Urls = GetAllUrls[callqth];
 
