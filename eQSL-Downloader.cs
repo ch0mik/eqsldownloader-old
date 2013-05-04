@@ -369,32 +369,37 @@ namespace eQSL_Downloader
 
 
                     AddInfo(rm.GetString("str_BeginDownloadProcedure"));
-                    
+
+
+
                         foreach (Downloader.CallAndQTH callqth in CallAndQTHList)
                         {
 
                             eqsl.Logon(callqth.CallSign,callqth.HamID);
-
-                            List<string> Urls = GetAllUrls[callqth];
-
-                            AddInfo(rm.GetString("str_BeginDownload_eQSLs") + " (" + Urls.Count.ToString() + ") " + rm.GetString("str_for") + " " + callqth.CallSign + " ( " + callqth.QTH + " ) ...");
-                            try
+                            if (GetAllUrls.ContainsKey(callqth))
                             {
-                               
-                                int Counter = 0;
+                                List<string> Urls = GetAllUrls[callqth];
 
-                                foreach (string Url in Urls)
+                                AddInfo(rm.GetString("str_BeginDownload_eQSLs") + " (" + Urls.Count.ToString() + ") " + rm.GetString("str_for") + " " + callqth.CallSign + " ( " + callqth.QTH + " ) ...");
+                                try
                                 {
-                                    eqsl.NewThreadOfGetJPGfromURL(Url, sleepSliderValue * 1000, callqth.CallSign);
-                                    Counter += 1;
-                                    AddInfo(Counter + "/" + Urls.Count + " : " + eqsl.FilenameFromURL(Url));
-                                }
 
+                                    int Counter = 0;
+
+                                    foreach (string Url in Urls)
+                                    {
+                                        eqsl.NewThreadOfGetJPGfromURL(Url, sleepSliderValue * 1000, callqth.CallSign);
+                                        Counter += 1;
+                                        AddInfo(Counter + "/" + Urls.Count + " : " + eqsl.FilenameFromURL(Url));
+                                    }
+
+                                }
+                                catch (Exception e)
+                                {
+                                    AddInfo(e.Message);
+                                }
                             }
-                            catch (Exception e)
-                            {
-                                AddInfo(e.Message);
-                            }
+
                         }
 
 
