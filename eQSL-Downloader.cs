@@ -503,6 +503,7 @@ namespace eQSL_Downloader
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
             }
+            Extensions.SaveStringToFile(Extensions.XML2JSON(SavingPath + "eQSL.xml"), "eQSL.json", SavingPath);
         }
 
         private void btnNext_Click(object sender, EventArgs e)

@@ -8,6 +8,7 @@ using System.Data;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Reflection;
+using Newtonsoft.Json;
 
 namespace SQ7MRU.Utils.ADIF
 {
@@ -196,6 +197,18 @@ namespace SQ7MRU.Utils.ADIF
             }
         }
 
+        internal static string XML2JSON(XmlDocument xml)
+        {
+            return JsonConvert.SerializeXmlNode(xml);
+        }
+
+
+        internal static string XML2JSON(String xmlFilePath)
+        {
+            XmlDocument _xml = new XmlDocument();
+            _xml.Load(xmlFilePath);
+            return JsonConvert.SerializeXmlNode(_xml);
+        }
 
         internal static string[] RawRecords(string FilePath)
         {
