@@ -35,6 +35,15 @@ namespace eQSL_Downloader
             Urls = new List<string>();
             rm = new ComponentResourceManager(this.GetType());
             InitializeComponent();
+            this.txtCallsign.KeyPress += new System.Windows.Forms.KeyPressEventHandler(CheckKeys);
+        }
+
+        private void CheckKeys(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+            {
+                btnGO_Click(sender, e);
+            }
         }
 
         private void frmHRDLOG_Load(object sender, EventArgs e)
@@ -64,5 +73,8 @@ namespace eQSL_Downloader
                 this.Close();
             }
         }
+
+
+
     }
 }

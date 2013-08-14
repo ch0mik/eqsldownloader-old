@@ -16,6 +16,7 @@ using System.Xml;
 using Microsoft.Win32;
 using SQ7MRU.Utils.eQSL;
 using SQ7MRU.Utils.ADIF;
+using Newtonsoft.Json;
 
 namespace eQSL_Downloader
 {
@@ -38,8 +39,18 @@ namespace eQSL_Downloader
             lblInfo.AutoSize = false;
             SavingPath = readPathFromRegistry();
             sleepSliderValue = 0;
+            this.txtPassword.KeyPress += new System.Windows.Forms.KeyPressEventHandler(CheckKeys);
 
         }
+
+        private void CheckKeys(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+            {
+                btnLogin_Click(sender, e);
+            }
+        }
+
 
         private void AddInfo(string Message, bool NewLine = true, bool Clear = false)
         {
@@ -633,7 +644,9 @@ namespace eQSL_Downloader
                             AddInfo(Counter + "/" + Urls.Count + " : " + iqsl.FilenameFromURL(Url));
                         }
 
-                        AddInfo(rm.GetString("str_Done")    );       
+                        AddInfo(rm.GetString("str_Done")    );
+
+                        Extensions.SaveStringToFile(JsonConvert.SerializeObject(Directory.GetFiles(SavingPath + "iQSL_HRDLOG/","*.jpg")).Replace(@"\\",@"\").Replace(SavingPath,""), "iQSL.json", SavingPath);
 
                         iqsl = null;
                     }
