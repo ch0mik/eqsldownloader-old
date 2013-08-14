@@ -646,7 +646,7 @@ namespace eQSL_Downloader
 
                         AddInfo(rm.GetString("str_Done")    );
 
-                        Extensions.SaveStringToFile(JsonConvert.SerializeObject(Directory.GetFiles(SavingPath + "iQSL_HRDLOG/","*.jpg")).Replace(@"\\",@"\").Replace(SavingPath,""), "iQSL.json", SavingPath);
+                        Extensions.SaveStringToFile(JsonConvert.SerializeObject(Directory.GetFiles(SavingPath + "iQSL_HRDLOG/", "*.jpg")).Replace(SavingPath.Replace(@"\", @"\\"), "").Replace(@"/", @"\\"), "iQSL.json", SavingPath);
 
                         iqsl = null;
                     }
