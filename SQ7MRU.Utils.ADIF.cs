@@ -1,14 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
-using System.Text;
-using System.IO;
 using System.Data;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.Reflection;
-using Newtonsoft.Json;
 
 namespace SQ7MRU.Utils.ADIF
 {
@@ -36,9 +34,6 @@ namespace SQ7MRU.Utils.ADIF
 
                 ADIFRow adifrow = new ADIFRow();
 
-                //string[] x = Regex.Split(record.Replace("\n", "").Replace("\r", ""), @"<(.*?):.*?>([^<\t\n\r\f\v]+)").Where(S => !string.IsNullOrEmpty(S)).ToArray();
-
-                // workaround to prevent from '< something >'  inner ADIF Cell
                 string[] x = Regex.Split(record.Replace("\n", "").Replace("\r", ""), @"<([^:]+):\d+[^>]*>").ToArray();
                 List<string> l = new List<string>(x);
                 l.RemoveAt(0);

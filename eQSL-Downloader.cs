@@ -1,22 +1,17 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json;
+using SQ7MRU.Utils.ADIF;
+using SQ7MRU.Utils.eQSL;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using System.Globalization;
-using System.Resources;
-using System.Threading;
 using System.IO;
-using System.Net;
-using System.Text.RegularExpressions;
+using System.Linq;
+using System.Threading;
+using System.Windows.Forms;
 using System.Xml;
-using Microsoft.Win32;
-using SQ7MRU.Utils.eQSL;
-using SQ7MRU.Utils.ADIF;
-using Newtonsoft.Json;
 
 namespace eQSL_Downloader
 {

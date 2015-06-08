@@ -1,14 +1,10 @@
-﻿using System;
+﻿using SQ7MRU.Utils.eQSL;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.Threading;
 using System.Globalization;
-using SQ7MRU.Utils.eQSL;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace eQSL_Downloader
 {
