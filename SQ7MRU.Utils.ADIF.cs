@@ -136,6 +136,7 @@ namespace SQ7MRU.Utils.ADIF
         public string lotw_qsl_rcvd { get; set; }
         public string lotw_qsl_sent { get; set; }
         public string mode { get; set; }
+        public string submode { get; set; }
         public string my_lat { get; set; }
         public string my_lon { get; set; }
         public string name { get; set; }

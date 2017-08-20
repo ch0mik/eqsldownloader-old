@@ -33,7 +33,7 @@ namespace eQSL_Downloader
             Literals();
             lblInfo.AutoSize = false;
             SavingPath = readPathFromRegistry();
-            sleepSliderValue = 0;
+            sleepSliderValue = 5;
             this.txtPassword.KeyPress += new System.Windows.Forms.KeyPressEventHandler(CheckKeys);
 
         }

@@ -13,7 +13,7 @@ namespace eQSL_Downloader
         ComponentResourceManager rm;
 
 
-        public frmConfig(int SliderValue = 0, string lang = null)
+        public frmConfig(int SliderValue = 5, string lang = null)
         {
             if (!string.IsNullOrEmpty(lang))
             {

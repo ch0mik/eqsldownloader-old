@@ -147,13 +147,10 @@
     <value>12, 9</value>
   </data>
   <data name="lblSlider.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 13</value>
+    <value>0, 13</value>
   </data>
   <data name="lblSlider.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
-  </data>
-  <data name="lblSlider.Text" xml:space="preserve">
-    <value />
   </data>
   <data name="&gt;&gt;lblSlider.Name" xml:space="preserve">
     <value>lblSlider</value>
@@ -197,9 +194,6 @@
   <data name="btnOK.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
-  <data name="Config.btnOK.Text" xml:space="preserve">
-    <value>Zatwierdź</value>
-  </data>
   <data name="&gt;&gt;btnOK.Name" xml:space="preserve">
     <value>btnOK</value>
   </data>
@@ -212,9 +206,9 @@
   <data name="&gt;&gt;btnOK.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="$this.Localizable" type="System.Boolean, mscorlib">
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
+  </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
     <value>6, 13</value>
   </data>
@@ -229,11 +223,5 @@
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Config.Opoznienie_w_pobieraniu_eQSL" xml:space="preserve">
-    <value>Opóźnienie w pobieraniu eQSL</value>
-  </data>
-  <data name="Config.Sekund" xml:space="preserve">
-    <value>sekund</value>
   </data>
 </root>

@@ -51,6 +51,7 @@
             // 
             resources.ApplyResources(this.slider, "slider");
             this.slider.Name = "slider";
+            this.slider.Value = 5;
             this.slider.Scroll += new System.EventHandler(this.slider_Scroll);
             // 
             // btnOK

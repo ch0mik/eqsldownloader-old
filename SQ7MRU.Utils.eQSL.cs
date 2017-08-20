@@ -54,7 +54,7 @@ namespace SQ7MRU.Utils.eQSL
                     {
                         string[] QTHNicknamesArray = Regex.Split(response, @"NAME=""HamID"" VALUE=""(.*)""").Where(S => S.Length < 50).ToArray();
                      
-                        PostData = "HamID=" + QTHNicknamesArray[0] + "&EnteredPassword=" + password + "&SelectCallsign=Log+In";
+                        PostData = "HamID=" + QTHNicknamesArray[1] + "&EnteredPassword=" + password + "&SelectCallsign=Log+In";
                         wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                         response = wc.UploadString(URL, PostData);
 
@@ -173,7 +173,6 @@ namespace SQ7MRU.Utils.eQSL
                     {
                         Extensions.SaveStringToFile(response.Replace(password, "--cut--"),"DownloadInBox_" + callqth.CallSign.Replace("/", "_") + ".htm", path);
                     }
-
                     wc.DownloadFile("http://eqsl.cc/qslcard/" + Regex.Match(response, @"((downloadedfiles\/)+[\w\d:#@%/;$()~_?\+-=\\\.&]*)").ToString(), path + callqth.CallSign.Replace("/", "_") + "-" + Regex.Replace(callqth.QTH, patternAlphaNumeric, "") + ".ADIF");
                 }
                 catch (Exception exc)
@@ -199,7 +198,7 @@ namespace SQ7MRU.Utils.eQSL
 
                 foreach (ADIFRow adifrow in ADIFRows)
                 {
-                    Urls.Add(UrlPrefix + "Callsign=" + adifrow.call + "&VisitorCallsign=" + login + "&QSODate=" + ConvertStringQSODateTimeOnToFormattedDateTime(adifrow.qso_date + adifrow.time_on).Replace(" ", "%20") + ":00.0&Band=" + adifrow.band + "&Mode=" + adifrow.mode);
+                    Urls.Add(UrlPrefix + "Callsign=" + adifrow.call + "&VisitorCallsign=" + login + "&QSODate=" + ConvertStringQSODateTimeOnToFormattedDateTime(adifrow.qso_date + adifrow.time_on).Replace(" ", "%20") + ":00.0&Band=" + adifrow.band + "&Mode=" + adifrow.submode ?? adifrow.mode);
                 }
 
             return Urls;
@@ -250,7 +249,7 @@ namespace SQ7MRU.Utils.eQSL
                 {
                     try
                     {
-                        Urls.Add(UrlPrefix + "Callsign=" + adifrow.call + "&VisitorCallsign=" + callqth.CallSign + "&QSODate=" + ConvertStringQSODateTimeOnToFormattedDateTime(adifrow.qso_date + adifrow.time_on).Replace(" ", "%20") + ":00.0&Band=" + adifrow.band + "&Mode=" + adifrow.mode);
+                        Urls.Add(UrlPrefix + "Callsign=" + adifrow.call + "&VisitorCallsign=" + callqth.CallSign + "&QSODate=" + ConvertStringQSODateTimeOnToFormattedDateTime(adifrow.qso_date + adifrow.time_on).Replace(" ", "%20") + ":00.0&Band=" + adifrow.band + "&Mode=" + (adifrow.submode ?? adifrow.mode));
                     }
                     catch (Exception exc)
                     {
@@ -263,15 +262,8 @@ namespace SQ7MRU.Utils.eQSL
         }
 
 
-        //private List<string> HTMLtoList(string ArchiveHTML)
-        //{
-        //    List<string> UrlList = Regex.Split(ArchiveHTML, @"((DisplayeQSL)+[\w\d:#@%/;$()~_?\+-=\\\.&]*)").Where(S => S.Contains("DisplayeQSL.cfm")).ToList();
-        //    return UrlList;
 
-        //}
-
-
-        public void GetJPGfromURL(string URL, int SleepTime = 0, string Subfolder = null)
+        public void GetJPGfromURL(string URL, int SleepTime = 5, string Subfolder = null)
         {
             string pathfile = path + FilenameFromURL(URL);
 
@@ -284,14 +276,36 @@ namespace SQ7MRU.Utils.eQSL
 
             if (!File.Exists(pathfile) ||new FileInfo(pathfile).Length == 0)
             {
-                Thread.Sleep(SleepTime);
                 
+
                 using (WebClient wc = new WebClientEx(m_container))
-               {
-                   wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-                   response = wc.DownloadString(URL);
-                   wc.DownloadFile("http://eqsl.cc" + Regex.Match(response, @"((\/CFFileServlet\/_cf_image\/)+[\w\d:#@%/;$()~_?\+-=\\\.&]*)").ToString(), pathfile);
-               }
+                {
+                    bool slowDown = true;
+                    int _sleepTime = 0;
+                    while (slowDown)
+                    {
+                        wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                        response = wc.DownloadString(URL);
+                        if (response.Contains("There is no entry for a QSO"))
+                        {
+                            Dictionary<string, string> dic = UrlHelper.Decode(URL).Replace("http://eqsl.cc/qslcard/DisplayeQSL.cfm?", "").Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries).ToDictionary(s => s.Split('=')[0].ToLower(), s => s.Split('=')[1].ToUpper());
+                            var x = CallAndQTHList.Where(S => S.CallSign == dic["visitorcallsign"]).FirstOrDefault();
+                        }
+                        else if (!response.Contains("Slow down!"))
+                        {
+                            wc.DownloadFile("http://eqsl.cc" + Regex.Match(response, @"((\/CFFileServlet\/_cf_image\/)+[\w\d:#@%/;$()~_?\+-=\\\.&]*)").ToString(), pathfile);
+                            if(File.ReadAllText(pathfile).Contains("<!-- Application In Root eQSL Folder -->"))
+                            { File.Delete(pathfile); }
+                            else
+                            { slowDown = false; }
+                        }
+                        else
+                        {
+                            Thread.Sleep(_sleepTime+=SleepTime);
+                            if(_sleepTime > 6000) { _sleepTime = 0; }
+                        }
+                    }
+                }
             }
 
         }
@@ -305,7 +319,7 @@ namespace SQ7MRU.Utils.eQSL
            }
         }
 
-        public void NewThreadOfGetJPGfromURL(string Url, int SleepTime = 0, string Subfolder = null)
+        public void NewThreadOfGetJPGfromURL(string Url, int SleepTime = 5, string Subfolder = null)
         {
                 var t = new Thread(() => GetJPGfromURL(Url,SleepTime,Subfolder));
                 t.Start();
@@ -440,7 +454,7 @@ namespace SQ7MRU.Utils.eQSL
             }
         }
 
-        public void GetJPGfromURL(string URL, int SleepTime = 0, string Subfolder = "iQSL_HRDLOG")
+        public void GetJPGfromURL(string URL, int SleepTime = 5, string Subfolder = "iQSL_HRDLOG")
         {
          
             CreateCallsingSubFolder();
@@ -470,7 +484,7 @@ namespace SQ7MRU.Utils.eQSL
             }
         }
 
-        public void NewThreadOfGetJPGfromURL(string Url, int SleepTime = 0, string Subfolder = "iQSL_HRDLOG")
+        public void NewThreadOfGetJPGfromURL(string Url, int SleepTime = 5, string Subfolder = "iQSL_HRDLOG")
         {
             var t = new Thread(() => GetJPGfromURL(Url, SleepTime, Subfolder));
             t.Start();
