@@ -1,5 +1,7 @@
-﻿using SQ7MRU.Utils.ADIF;
+﻿using HtmlAgilityPack;
+using SQ7MRU.Utils.ADIF;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,10 +9,8 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-
 namespace SQ7MRU.Utils.eQSL
 {
-
     public class Downloader
     {
         public readonly CookieContainer m_container;
@@ -38,28 +38,29 @@ namespace SQ7MRU.Utils.eQSL
             password = Password;
         }
 
-  
         public void Logon()
         {
             try
             {
                 using (WebClient wc = new WebClientEx(m_container))
                 {
-                    string URL = "http://eqsl.cc/qslcard/LoginFinish.cfm";
+                    string URL = "https://eqsl.cc/qslcard/LoginFinish.cfm";
                     string PostData = "Callsign=" + login + "&EnteredPassword=" + password + "&Login=Go";
                     wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                     response = wc.UploadString(URL, PostData);
 
-                    if(response.Contains(@">Select one<"))
+                    if (response.Contains(@">Select one<"))
                     {
                         string[] QTHNicknamesArray = Regex.Split(response, @"NAME=""HamID"" VALUE=""(.*)""").Where(S => S.Length < 50).ToArray();
-                     
-                        PostData = "HamID=" + QTHNicknamesArray[1] + "&EnteredPassword=" + password + "&SelectCallsign=Log+In";
-                        wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-                        response = wc.UploadString(URL, PostData);
 
+                        foreach (var hamid in QTHNicknamesArray)
+                        {
+                            PostData = "HamID=" + hamid + "&Callsign=" + login + "&EnteredPassword=" + password + "&SelectCallsign=Log+In";
+                            wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                            response = wc.UploadString(URL, PostData);
+                        }
                     }
-                        
+
                     if (saveLog)
                     {
                         Extensions.SaveStringToFile(response.Replace(password, "--cut--"), "LoginFinish.htm", path);
@@ -74,15 +75,14 @@ namespace SQ7MRU.Utils.eQSL
 
         public void Logon(string CallSign, string HamID = null)
         {
-
             using (WebClient wc = new WebClientEx(m_container))
             {
-                string URL = "http://eqsl.cc/qslcard/LoginFinish.cfm";
+                string URL = "https://eqsl.cc/qslcard/LoginFinish.cfm";
                 string PostData;
 
                 if (!string.IsNullOrEmpty(HamID))
                 {
-                    PostData = "HamID=" + HamID + "&EnteredPassword=" + password + "&SelectCallsign=Log+In";
+                    PostData = "HamID=" + HamID + "&Callsign=" + CallSign + "&EnteredPassword=" + password + "&SelectCallsign=Log+In";
                 }
                 else
                 {
@@ -95,74 +95,74 @@ namespace SQ7MRU.Utils.eQSL
 
         public List<CallAndQTH> getCallAndQTH()
         {
-
             using (WebClient wc = new WebClientEx(m_container))
             {
-                string URL = "http://eqsl.cc/qslcard/MyAccounts.cfm";
+                string URL = "https://eqsl.cc/qslcard/MyAccounts.cfm";
                 wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                 response = wc.DownloadString(URL);
 
                 if (saveLog)
                 {
-                    Extensions.SaveStringToFile(response.Replace(password, "--cut--"),"MyAccounts.htm",path);
+                    Extensions.SaveStringToFile(response.Replace(password, "--cut--"), "MyAccounts.htm", path);
                 }
 
                 response = response.Replace("<BR><STRONG>Primary</STRONG>", "");
-                
+
                 if (response.Contains("You currently have no other accounts attached."))
                 {
-                    CallAndQTH callqth = new CallAndQTH();
-                    callqth.CallSign = login;
-                    callqth.QTH = "";
-                    CallAndQTHList.Add(callqth);
-                    callqth = null;
+                    HtmlDocument doc = new HtmlDocument();
+
+                    doc.LoadHtml(response);
+                    var forms = doc.DocumentNode.SelectNodes("//form");
+
+                    foreach (var form in forms)
+                    {
+                        if (form.Attributes["action"].Value == "AttachAccount.cfm")
+                        {
+                            CallAndQTH callqth = new CallAndQTH();
+                            callqth.QTH = "";
+                            callqth.CallSign = form.ChildNodes[5]?.ChildNodes[1]?.InnerText;
+                            callqth.UserID = form.Elements("input")?.ToArray()[0]?.Attributes["value"]?.Value;
+                            callqth.HamID = form.Elements("input")?.ToArray()[1]?.Attributes["value"]?.Value;
+                            CallAndQTHList.Add(callqth);
+                        }
+                    }
                 }
                 else
                 {
                     string[] CallAndQTHArray = Regex.Split(response, @"<TD\b[^>]*>(.*?)\<BR\>\((.*?)\)</TD>\r\n").Where(S => S.Length < 50).ToArray();
                     string[] HamIDArray = Regex.Split(response, @"NAME=""HamID"" VALUE=""(.*)""").Where(S => S.Length < 50).ToArray();
 
-
                     if (CallAndQTHArray.Length % 2 == 0)
                     {
-                        
-
-                            for (int i = 0; i < CallAndQTHArray.Length; i++)
-                            {
-                                CallAndQTH callqth = new CallAndQTH();
-                                callqth.CallSign = CallAndQTHArray[i];
-                                callqth.QTH = CallAndQTHArray[i + 1];
-                                callqth.HamID = HamIDArray[i + 1];
-                                CallAndQTHList.Add(callqth);
-                                callqth = null;
-                                i++;
-                            }
-
-                        
+                        for (int i = 0; i < CallAndQTHArray.Length; i++)
+                        {
+                            CallAndQTH callqth = new CallAndQTH();
+                            callqth.CallSign = CallAndQTHArray[i];
+                            callqth.QTH = CallAndQTHArray[i + 1];
+                            callqth.HamID = HamIDArray[i + 1];
+                            CallAndQTHList.Add(callqth);
+                            callqth = null;
+                            i++;
+                        }
                     }
-
                 }
                 return CallAndQTHList;
-
             }
-
         }
 
         public string getADIF(CallAndQTH callqth)
         {
-            string ADIF ="", URL = "";
-            
+            string URL = "https://www.eqsl.cc/qslcard/DownloadInBox.cfm?UserName=" + callqth.CallSign + "&Password=" + password;
+
+            Logon(callqth.CallSign, callqth.HamID);
+
             using (WebClient wc = new WebClientEx(m_container))
             {
                 if (!string.IsNullOrEmpty(callqth.QTH))
                 {
-                    URL = "http://www.eqsl.cc/qslcard/DownloadInBox.cfm?UserName=" + callqth.CallSign + "&Password=" + password + "&QTHNickname=" + callqth.QTH ;
+                    URL += $"&QTHNickname={callqth.QTH}";
                 }
-                else
-                {
-                    URL = "http://www.eqsl.cc/qslcard/DownloadInBox.cfm?UserName=" + callqth.CallSign + "&Password=" + password;
-                }
-
 
                 try
                 {
@@ -171,35 +171,39 @@ namespace SQ7MRU.Utils.eQSL
 
                     if (saveLog)
                     {
-                        Extensions.SaveStringToFile(response.Replace(password, "--cut--"),"DownloadInBox_" + callqth.CallSign.Replace("/", "_") + ".htm", path);
+                        Extensions.SaveStringToFile(response.Replace(password, "--cut--"), "DownloadInBox_" + callqth.CallSign.Replace("/", "_") + ".htm", path);
                     }
-                    wc.DownloadFile("http://eqsl.cc/qslcard/" + Regex.Match(response, @"((downloadedfiles\/)+[\w\d:#@%/;$()~_?\+-=\\\.&]*)").ToString(), path + callqth.CallSign.Replace("/", "_") + "-" + Regex.Replace(callqth.QTH, patternAlphaNumeric, "") + ".ADIF");
+
+                    var adifUrl = Regex.Match(response, @"((downloadedfiles\/)+[\w\d:#@%/;$()~_?\+-=\\\.&]*)").ToString();
+                    if (!string.IsNullOrEmpty(adifUrl))
+                    {
+                        var adifFile = Path.Combine(path, $"{callqth.CallSign.Replace("/", "_")}{Regex.Replace(callqth.QTH, patternAlphaNumeric, "")}.ADIF");
+                        wc.DownloadFile("https://eqsl.cc/qslcard/" + adifUrl, adifFile);
+                        callqth.Adif = adifFile;
+                    }
                 }
                 catch (Exception exc)
                 {
                     error += Environment.NewLine + exc.Message;
                 }
+            }
 
-             }
-
-            return ADIF;
-
+            return callqth.Adif;
         }
 
         public List<string> getUrlsFromADIFFile(string ADIFpath)
         {
             List<string> Urls = new List<string>();
 
+            ADIFReader ar = new ADIFReader(ADIFpath);
+            List<ADIFRow> ADIFRows = ar.GetAdifRows();
 
-                ADIFReader ar = new ADIFReader(ADIFpath);
-                List<ADIFRow> ADIFRows = ar.GetADIFRows();
+            string UrlPrefix = "https://eqsl.cc/qslcard/DisplayeQSL.cfm?";
 
-                string UrlPrefix = "http://eqsl.cc/qslcard/DisplayeQSL.cfm?";
-
-                foreach (ADIFRow adifrow in ADIFRows)
-                {
-                    Urls.Add(UrlPrefix + "Callsign=" + adifrow.call + "&VisitorCallsign=" + login + "&QSODate=" + ConvertStringQSODateTimeOnToFormattedDateTime(adifrow.qso_date + adifrow.time_on).Replace(" ", "%20") + ":00.0&Band=" + adifrow.band + "&Mode=" + adifrow.submode ?? adifrow.mode);
-                }
+            foreach (ADIFRow adifrow in ADIFRows)
+            {
+                Urls.Add(UrlPrefix + "Callsign=" + adifrow.call + "&VisitorCallsign=" + login + "&QSODate=" + ConvertStringQSODateTimeOnToFormattedDateTime(adifrow.qso_date + adifrow.time_on).Replace(" ", "%20") + ":00.0&Band=" + adifrow.band + "&Mode=" + adifrow.submode ?? adifrow.mode);
+            }
 
             return Urls;
         }
@@ -208,14 +212,13 @@ namespace SQ7MRU.Utils.eQSL
         {
             bool check = false;
 
-           string ADIF = Extensions.LoadFileToString(ADIFpath);
+            string ADIF = Extensions.LoadFileToString(ADIFpath);
 
-            if(ADIF.ToLower().Contains("received eqsls for " + login.ToLower()))
+            if (ADIF.ToLower().Contains("received eqsls for " + login.ToLower()))
             { check = true; }
 
             return check;
         }
-
 
         private string ConvertStringQSODateTimeOnToFormattedDateTime(string QSODateTimeOn)
         {
@@ -238,30 +241,28 @@ namespace SQ7MRU.Utils.eQSL
 
         public List<string> GetURLs(CallAndQTH callqth)
         {
-
-            using (ADIFReader ar = new ADIFReader(path + callqth.CallSign.Replace("/", "_") + "-" + Regex.Replace(callqth.QTH, patternAlphaNumeric, "") + ".ADIF"))
+            List<string> Urls = new List<string>();
+            if (!string.IsNullOrEmpty(callqth.Adif))
             {
-                
-                string UrlPrefix = "http://eqsl.cc/qslcard/DisplayeQSL.cfm?";
-                List<string> Urls = new List<string>();
-                List<ADIFRow> ADIFRows = ar.GetADIFRows();
-                foreach (ADIFRow adifrow in ADIFRows)
+                using (ADIFReader ar = new ADIFReader(callqth.Adif))
                 {
-                    try
+                    string UrlPrefix = "https://eqsl.cc/qslcard/DisplayeQSL.cfm?";
+                    List<ADIFRow> ADIFRows = ar.GetAdifRows();
+                    foreach (ADIFRow adifrow in ADIFRows)
                     {
-                        Urls.Add(UrlPrefix + "Callsign=" + adifrow.call + "&VisitorCallsign=" + callqth.CallSign + "&QSODate=" + ConvertStringQSODateTimeOnToFormattedDateTime(adifrow.qso_date + adifrow.time_on).Replace(" ", "%20") + ":00.0&Band=" + adifrow.band + "&Mode=" + (adifrow.submode ?? adifrow.mode));
-                    }
-                    catch (Exception exc)
-                    {
-                        error += Environment.NewLine + exc.Message;
+                        try
+                        {
+                            Urls.Add(UrlPrefix + "Callsign=" + adifrow.call + "&VisitorCallsign=" + callqth.CallSign + "&QSODate=" + ConvertStringQSODateTimeOnToFormattedDateTime(adifrow.qso_date + adifrow.time_on).Replace(" ", "%20") + ":00.0&Band=" + adifrow.band + "&Mode=" + (adifrow.submode ?? adifrow.mode));
+                        }
+                        catch (Exception exc)
+                        {
+                            error += Environment.NewLine + exc.Message;
+                        }
                     }
                 }
-                
-                return Urls;
             }
+            return Urls;
         }
-
-
 
         public void GetJPGfromURL(string URL, int SleepTime = 5, string Subfolder = null)
         {
@@ -272,12 +273,9 @@ namespace SQ7MRU.Utils.eQSL
                 CreateCallsingSubFolder(Subfolder.Replace("/", "_"));
                 pathfile = path + Subfolder.Replace("/", "_") + @"\" + FilenameFromURL(URL);
             }
-           
 
-            if (!File.Exists(pathfile) ||new FileInfo(pathfile).Length == 0)
+            if (!File.Exists(pathfile) || new FileInfo(pathfile).Length == 0)
             {
-                
-
                 using (WebClient wc = new WebClientEx(m_container))
                 {
                     bool slowDown = true;
@@ -288,26 +286,25 @@ namespace SQ7MRU.Utils.eQSL
                         response = wc.DownloadString(URL);
                         if (response.Contains("There is no entry for a QSO"))
                         {
-                            Dictionary<string, string> dic = UrlHelper.Decode(URL).Replace("http://eqsl.cc/qslcard/DisplayeQSL.cfm?", "").Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries).ToDictionary(s => s.Split('=')[0].ToLower(), s => s.Split('=')[1].ToUpper());
+                            Dictionary<string, string> dic = UrlHelper.Decode(URL).Replace("https://eqsl.cc/qslcard/DisplayeQSL.cfm?", "").Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries).ToDictionary(s => s.Split('=')[0].ToLower(), s => s.Split('=')[1].ToUpper());
                             var x = CallAndQTHList.Where(S => S.CallSign == dic["visitorcallsign"]).FirstOrDefault();
                         }
                         else if (!response.Contains("Slow down!"))
                         {
-                            wc.DownloadFile("http://eqsl.cc" + Regex.Match(response, @"((\/CFFileServlet\/_cf_image\/)+[\w\d:#@%/;$()~_?\+-=\\\.&]*)").ToString(), pathfile);
-                            if(File.ReadAllText(pathfile).Contains("<!-- Application In Root eQSL Folder -->"))
+                            wc.DownloadFile("https://eqsl.cc" + Regex.Match(response, @"((\/CFFileServlet\/_cf_image\/)+[\w\d:#@%/;$()~_?\+-=\\\.&]*)").ToString(), pathfile);
+                            if (File.ReadAllText(pathfile).Contains("<!-- Application In Root eQSL Folder -->"))
                             { File.Delete(pathfile); }
                             else
                             { slowDown = false; }
                         }
                         else
                         {
-                            Thread.Sleep(_sleepTime+=SleepTime);
-                            if(_sleepTime > 6000) { _sleepTime = 0; }
+                            Thread.Sleep(_sleepTime += SleepTime);
+                            if (_sleepTime > 6000) { _sleepTime = 0; }
                         }
                     }
                 }
             }
-
         }
 
         public void NewThreadOfGetJPGfromURL(List<string> Urls)
@@ -316,19 +313,19 @@ namespace SQ7MRU.Utils.eQSL
             {
                 var t = new Thread(() => GetJPGfromURL(Url));
                 t.Start();
-           }
+            }
         }
 
         public void NewThreadOfGetJPGfromURL(string Url, int SleepTime = 5, string Subfolder = null)
         {
-                var t = new Thread(() => GetJPGfromURL(Url,SleepTime,Subfolder));
-                t.Start();
-                t.Join();
+            var t = new Thread(() => GetJPGfromURL(Url, SleepTime, Subfolder));
+            t.Start();
+            t.Join();
         }
 
         public string FilenameFromURL(string URL)
         {
-            Dictionary<string, string> dic = UrlHelper.Decode(URL).Replace("http://eqsl.cc/qslcard/DisplayeQSL.cfm?", "").Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries).ToDictionary(s => s.Split('=')[0].ToLower(), s => s.Split('=')[1].ToUpper());
+            Dictionary<string, string> dic = UrlHelper.Decode(URL).Replace("https://eqsl.cc/qslcard/DisplayeQSL.cfm?", "").Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries).ToDictionary(s => s.Split('=')[0].ToLower(), s => s.Split('=')[1].ToUpper());
             string Filename = dic["callsign"].Replace("/", "-") + "_" + dic["qsodate"].Replace(":00.0", "").Replace(":", "").Replace(" ", "").Replace("-", "") + "_" + dic["band"] + "_" + dic["mode"] + ".JPG";
             dic = null;
 
@@ -342,14 +339,20 @@ namespace SQ7MRU.Utils.eQSL
                 Directory.CreateDirectory(path + Callsing);
         }
 
-
         public class CallAndQTH
         {
             public string CallSign { get; set; }
             public string QTH { get; set; }
             public string HamID { get; set; }
+            public string UserID { get; set; }
+            public string Adif { get; set; }
+            public ConcurrentDictionary<ADIFRow, string> QSOs { get; set; }
+
+            public CallAndQTH()
+            {
+                QSOs = new ConcurrentDictionary<ADIFRow, string>();
+            }
         }
-   
 
         public static class UrlHelper
         {
@@ -390,7 +393,6 @@ namespace SQ7MRU.Utils.eQSL
                 return Urls;
             }
         }
-
     }
 
     public class iQSLHRDLOG
@@ -420,20 +422,19 @@ namespace SQ7MRU.Utils.eQSL
         {
             List<string> UrlList = Regex.Split(HTML, @"((PrintQsl)+[\w\d:#@%/;$()~_?\+-=\\\.&]*)").Where(S => S.Contains("PrintQsl.aspx?id=")).ToList();
             return UrlList;
-
         }
 
         public List<string> GetUrls()
         {
             string _old_string = "PrintQsl.aspx?id=";
-            string _new_string = "http://www.hrdlog.net/qsl.aspx?id=";
+            string _new_string = "https://www.hrdlog.net/qsl.aspx?id=";
 
             try
             {
                 using (WebClientEx wc = new WebClientEx(m_container))
                 {
                     string POSTDATA = "ctl00$ContentPlaceHolder1$TbCallsign=" + callsign + "&ctl00$ContentPlaceHolder1$CbAllQsl=on";
-                    string URL = "http://www.hrdlog.net/searchqso.aspx?log=";
+                    string URL = "https://www.hrdlog.net/searchqso.aspx?log=";
                     wc.Cookies.Add(new Uri(URL), new Cookie("callsign", callsign.ToUpper()));
                     wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                     response = wc.UploadString(URL, POSTDATA);
@@ -456,11 +457,9 @@ namespace SQ7MRU.Utils.eQSL
 
         public void GetJPGfromURL(string URL, int SleepTime = 5, string Subfolder = "iQSL_HRDLOG")
         {
-         
             CreateCallsingSubFolder();
-            
-            string pathfile = path + Subfolder + @"\" + FilenameFromURL(URL);
 
+            string pathfile = path + Subfolder + @"\" + FilenameFromURL(URL);
 
             if (!File.Exists(pathfile) || new FileInfo(pathfile).Length == 0)
             {
@@ -472,7 +471,6 @@ namespace SQ7MRU.Utils.eQSL
                     wc.DownloadFile(URL, pathfile);
                 }
             }
-
         }
 
         public void NewThreadOfGetJPGfromURL(List<string> Urls)
@@ -493,7 +491,7 @@ namespace SQ7MRU.Utils.eQSL
 
         public string FilenameFromURL(string URL)
         {
-            return URL.ToLower().Replace("http://www.hrdlog.net/qsl.aspx?id=", "") + ".JPG";            
+            return URL.ToLower().Replace("https://www.hrdlog.net/qsl.aspx?id=", "") + ".JPG";
         }
 
         private void CreateCallsingSubFolder()
@@ -504,7 +502,7 @@ namespace SQ7MRU.Utils.eQSL
         }
     }
 
-    // tips from http://stackoverflow.com/questions/1777221/using-cookiecontainer-with-webclient-class
+    // tips from https://stackoverflow.com/questions/1777221/using-cookiecontainer-with-webclient-class
     public class WebClientEx : WebClient
     {
         public WebClientEx(CookieContainer container)
@@ -550,5 +548,4 @@ namespace SQ7MRU.Utils.eQSL
             }
         }
     }
-
 }

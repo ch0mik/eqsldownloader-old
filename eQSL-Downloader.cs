@@ -327,8 +327,14 @@ namespace eQSL_Downloader
 
                     foreach (Downloader.CallAndQTH callqth in CallAndQTHList)
                     {
-
-                        AddInfo(rm.GetString("str_beginDownloadADIFfor") + callqth.CallSign + " (QTH : " + callqth.QTH + ")");
+                        if (!string.IsNullOrEmpty(callqth.QTH))
+                        {
+                            AddInfo(rm.GetString("str_beginDownloadADIFfor") + callqth.CallSign + " (QTH : " + callqth.QTH + ")");
+                        }
+                        else
+                        {
+                            AddInfo(rm.GetString("str_beginDownloadADIFfor") + callqth.CallSign + " (QTH : " + callqth.QTH + ")");
+                        }
 
                         eqsl.Logon(callqth.CallSign);
                         eqsl.getADIF(callqth);
@@ -533,7 +539,7 @@ namespace eQSL_Downloader
 
         private void imgSQ7MRU_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("http://sq7mru.blogspot.com");
+            System.Diagnostics.Process.Start("https://sq7mru.blogspot.com");
         }
 
         private void importujADIFToolStripMenuItem_Click(object sender, EventArgs e)

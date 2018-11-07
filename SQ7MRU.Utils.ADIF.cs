@@ -23,63 +23,64 @@ namespace SQ7MRU.Utils.ADIF
             filepath = FilePath;
             isInitialized = true;
         }
-        
-        public List<ADIFRow> GetADIFRows()
+
+        public List<ADIFRow> GetAdifRows()
         {
-            string[] rawrecords = ADIFRecords();
             ADIFRows = new List<ADIFRow>();
 
-            foreach (string record in rawrecords)
+            if (File.Exists(filepath))
             {
+                string[] rawrecords = ADIFRecords(File.ReadAllText(filepath));
 
-                ADIFRow adifrow = new ADIFRow();
-
-                string[] x = Regex.Split(record.Replace("\n", "").Replace("\r", ""), @"<([^:]+):\d+[^>]*>").ToArray();
-                List<string> l = new List<string>(x);
-                l.RemoveAt(0);
-                x = l.ToArray();
-                
-                var dic = new Dictionary<string, string>();
-                if (x.Length % 2 == 0)
+                foreach (string record in rawrecords)
                 {
-                    for (int i = 0; i < x.Length; i++)
+                    ADIFRow AdifRow = new ADIFRow();
+
+                    string[] x = Regex.Split(record.Replace("\n", "").Replace("\r", ""), @"<([^:]+):\d+[^>]*>").ToArray();
+                    List<string> l = new List<string>(x);
+                    l.RemoveAt(0);
+                    x = l.ToArray();
+
+                    var dic = new Dictionary<string, string>();
+                    if (x.Length % 2 == 0)
                     {
-                        dic.Add(x[i].ToLower(), x[i + 1]);
-                        i++;
-                    }
-
-
-                    PropertyInfo[] props = adifrow.GetType().GetProperties();
-
-                    foreach (PropertyInfo prp in props)
-                    {
-                        if (dic.ContainsKey(prp.Name.ToLower()))
+                        for (int i = 0; i < x.Length; i++)
                         {
-                            PropertyInfo pi = typeof(ADIFRow).GetProperty(prp.Name);
-                            pi.SetValue(adifrow, dic[prp.Name.ToLower()], null);
+                            dic.Add(x[i].ToUpper(), x[i + 1]);
+                            i++;
                         }
 
+                        PropertyInfo[] props = AdifRow.GetType().GetProperties();
+
+                        foreach (PropertyInfo prp in props)
+                        {
+                            if (dic.ContainsKey(prp.Name.ToUpper()))
+                            {
+                                PropertyInfo pi = typeof(ADIFRow).GetProperty(prp.Name);
+                                pi.SetValue(AdifRow, dic[prp.Name.ToUpper()], null);
+                            }
+                        }
+
+                        ADIFRows.Add(AdifRow);
                     }
                 }
-
-                if (!string.IsNullOrEmpty(adifrow.call))
-                {
-                    ADIFRows.Add(adifrow);
-                }
             }
-
 
             return ADIFRows;
         }
 
-
-        private string[] ADIFRecords()
+        private string[] ADIFRecords(string adif)
         {
-            return Extensions.RawRecords(filepath);
-     
+            if (adif.Contains("<EOH>"))
+            {
+                string[] RawRecords = adif?.Split(new string[] { "<EOH>" }, StringSplitOptions.RemoveEmptyEntries)[1]?.Split(new string[] { "<EOR>" }, StringSplitOptions.RemoveEmptyEntries);
+                return RawRecords;
+            }
+            else
+            {
+                return new string[0];
+            }
         }
-
-       
 
         public void Dispose()
         {
@@ -104,7 +105,6 @@ namespace SQ7MRU.Utils.ADIF
                 IsDisposed = true;
             }
         }
-
     }
 
     public class ADIFRow
@@ -154,28 +154,22 @@ namespace SQ7MRU.Utils.ADIF
         public string time_off { get; set; }
         public string time_on { get; set; }
         public string qso_date { get; set; }
-
     }
-
 
     internal static class Extensions
     {
-
         internal static String LoadFileToString(string FilePath)
         {
-
             using (StreamReader streamReader = new StreamReader(FilePath))
             {
                 string text = streamReader.ReadToEnd();
                 streamReader.Close();
                 return text;
             }
-           
         }
 
         internal static void SaveStringToFile(string Body, string FileName, string Path = null)
         {
-
             string path;
 
             if (string.IsNullOrEmpty(Path))
@@ -197,7 +191,6 @@ namespace SQ7MRU.Utils.ADIF
         {
             return JsonConvert.SerializeXmlNode(xml);
         }
-
 
         internal static string XML2JSON(String xmlFilePath)
         {
@@ -221,7 +214,6 @@ namespace SQ7MRU.Utils.ADIF
 
             for (int i = 0; i < RawRecords.Length; i++)
             {
-
                 string[] kolumna = Regex.Split(RawRecords[1].Replace("\r\n", ""), @"<(.*?):.*?>([^<\t\n\r\f\v]+)").Where(S => !string.IsNullOrEmpty(S)).ToArray();
                 for (int ii = 0; ii < kolumna.Length; ii++)
                 {
@@ -244,7 +236,6 @@ namespace SQ7MRU.Utils.ADIF
             return src.GetType().GetProperty(propName).GetValue(src, null);
         }
 
-
         internal static string ConvertStringToFormattedDateTime(string QSODateTimeOn, string FormatIn = "yyyyMMddHHmm", string FormatOut = "yyyy-MM-dd HH:mm")
         {
             string _datetimeconverted = QSODateTimeOn;
@@ -263,7 +254,5 @@ namespace SQ7MRU.Utils.ADIF
 
             return _datetimeconverted;
         }
-
     }
-
 }
